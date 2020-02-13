@@ -9,3 +9,5 @@ panel_builder_pyqt/target/*
 *.drawio
 *.html
 *.pdf
+
+__pycache__/*
