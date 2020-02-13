@@ -1,0 +1,10 @@
+# Ignore these files
+
+logs/*
+reports/*
+some_test/*
+SQLTest/*
+
+*.drawio
+*.html
+*.pdf
