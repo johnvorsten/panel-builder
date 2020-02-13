@@ -4,6 +4,7 @@ logs/*
 reports/*
 some_test/*
 SQLTest/*
+panel_builder_pyqt/target/*
 
 *.drawio
 *.html

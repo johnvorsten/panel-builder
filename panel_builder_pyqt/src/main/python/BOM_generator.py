@@ -5,13 +5,16 @@ Created on Tue Feb 26 14:30:02 2019
 @author: z003vrzk
 """
 
+# Python imports
+import subprocess
+from collections import namedtuple
+import win32com.client as win32
+
 # Third party imports
 import pandas as pd
 import os
 import numpy as np
 import xlsxwriter
-from collections import namedtuple
-import win32com.client as win32
 
 # local imports
 import DT_sql_tools_v6 as sql_tools
@@ -498,7 +501,7 @@ class BOMGenerator():
         # Autofit columns
         self._autofit_cells(report_path, sheetname)
         
-        os.system('start EXCEL.EXE ' + report_path)
+        subprocess.run('start EXCEL.exe %s' %report_path, shell=True)
         
         return
     
