@@ -6,6 +6,7 @@ Created on Mon Jan 13 09:15:30 2020
 """
 
 from BOM_generator import BOMGenerator
+import os
 
 #%% 
 

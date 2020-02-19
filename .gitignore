@@ -1,13 +1,19 @@
 # Ignore these files
 
-logs/*
-reports/*
-some_test/*
-SQLTest/*
-panel_builder_pyqt/target/*
+logs
+
+
 
 *.drawio
 *.html
 *.pdf
 
-__pycache__/*
+# Directory structures
+**/__pycache__
+**/Archive
+**/reports
+**/some_test
+**/SQLTest
+panel_builder_pyqt/target/*
+
+testing.py
