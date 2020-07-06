@@ -1,3 +1,0 @@
-Transaction code /SIE/E_MM_PARTNO_SUP Spiridon Transactions > Material management > reporting > purchasing > Part number or material group by supplier
-Transaction code /SIE/E_MM_RO1817_PO Spiridon Transactions > Materials management > reporting > Purchasing > Purchase order report
-Transaction code /SIE/E_MM_PO_ME80FN Spiridon Transactions > Materials management > reporting > Purchasing > /SIE/E_MM_PO_ME80FN - General evaluations
