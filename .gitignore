@@ -1,12 +1,11 @@
 # Ignore these files
 
-logs
-
-
-
+# File types
 *.drawio
 *.html
 *.pdf
+*.xlsx
+*.xlsm
 
 # Directory structures
 **/__pycache__
@@ -14,6 +13,8 @@ logs
 **/reports
 **/some_test
 **/SQLTest
-panel_builder_pyqt/target/*
+**/target
+**/pytz
+
 
 testing.py
