@@ -26,6 +26,7 @@ from BOM_generator import BOMGenerator
 from MainWindow_Actions import MainWindowActions
 from ReportDialog_Actions import ReportDialogActions
 from Ui_DeviceTableDialog import Ui_DeviceTableDialog
+from sql_tools import SQLBase
 
 # Instances
 logging.basicConfig(filename=os.path.join(os.getcwd(), 'logs', 'sql_logs.log'),
@@ -152,6 +153,63 @@ class DeviceTableDialog(QDialog, Ui_DeviceTableDialog):
 
         return None
 
+    def get_device_table(self):
+        """Retrieve the next cluster of points from documents stored in the
+        clustered_points collection. This function handles getting the next
+        document that is missing labels, as well as extracting clustered
+        points from each of those documents.
+        1) Create a data model (Qt is a model-view architecture. The model
+        Controls where the data comes from. Right now teh QTableView is only
+
+        inputs
+        -------
+        None
+        outputs
+        -------
+        dataframe : (pd.DataFrame) a single cluster of points from a document
+        in the clustered_ponts collection"""
+
+        # Create a data model (Qt is a model-view architecture. THe model
+        # Controls where the data comes from. Right now teh QTableView is only
+        # A View on the models data)
+
+        # Instantiate classes if not already
+        if not 'dataframe_generator' in self.__dict__.keys():
+            self.dataframe_generator = self.mongoQueryHelper.retrieve_points_dataframe(self.current_document)
+
+        try:
+            # Generate the next dataframe and set the model in the table view
+            self.index, self.current_dataframe = next(self.dataframe_generator)
+            tableModel = DataFrameModel(self.current_dataframe)
+            self.tableView.setModel(tableModel)
+
+        except StopIteration:
+            # The current document is out of clustered points dataframes
+            # First, generate a new document to make a new generator over the
+            # documents clustered_points objects
+            # Finally, get the next dataframe from the generator
+            self.current_document = next(self.document_generator)
+            self.dataframe_generator = self.mongoQueryHelper.retrieve_points_dataframe(self.current_document)
+            self.index, self.current_dataframe = next(self.dataframe_generator)
+            tableModel = DataFrameModel(self.current_dataframe)
+            self.tableView.setModel(tableModel)
+
+        # Update the documentName Label with the current database name
+        database_tag = self.current_document['database_tag']
+        documentLabel = self.rightGroupBox.findChild(QLabel, 'databaseTag')
+        documentLabel.setText(database_tag)
+
+        # Update the current index
+        self.rightGroupBox.findChild(QLabel, 'currentIndex')
+        currentIndex = self.rightGroupBox.findChild(QLabel, 'currentIndex')
+        currentIndex.setText(str(self.index))
+
+        return None
+
+    def set_device_table(self):
+
+        return None
+
 
 
 class MainWindow(QMainWindow, Ui_MainWindow, MainWindowActions):
@@ -227,9 +285,21 @@ class AppContext(ApplicationContext):
 
         self.window = MainWindow(self)
 
+        # TODO Get these dynamically from .ini or options interface
+        self.server_name = '.\DT_SQLEXPR2008'
+        self.driver_name = 'SQL Server Native Client 10.0'
+        self.database_name = 'PBJobDB'
+
+        return None
+
     def run(self):
         self.window.show()
         return self.app.exec_()
+
+    def init_database_connection(self, path_mdf, path_ldf):
+        self.SQLBase = SQLBase()
+
+        pass
 
     @cached_property
     def main_icon(self):

@@ -16,5 +16,7 @@
 **/target
 **/pytz
 
-
+# Files
 testing.py
+**SAPExportInstructions.txt
+sap-output.txt

@@ -148,3 +148,130 @@ Existing Database : JobDB05282020105031
 2020-06-18 07:21:24,004 Database : PBJobDB connected
 2020-06-18 07:21:45,330 Database : PBJobDB0618072145 connected
 2020-06-18 07:50:05,340 ('42000', "[42000] [Microsoft][SQL Server Native Client 10.0][SQL Server]A file activation error occurred. The physical file name 'None' may be incorrect. Diagnose and correct additional errors, and retry the operation. (5105) (SQLExecDirectW)")
+2020-07-07 12:11:35,606 'SQLBase' object has no attribute 'master_connection_str'
+2020-07-07 12:12:56,348 ('42000', '[42000] [Microsoft][SQL Server Native Client 10.0][SQL Server]Unable to open the physical file "\\\\ustxca00064sto.ad001.siemens.net\\grp$\\FSA01313088\\Jobs\\Automation\\Test\\MDT\\JobDB.mdf". Operating system error 5: "5(Access is denied.)". (5120) (SQLExecDirectW)')
+2020-07-07 12:15:24,989 ('42000', '[42000] [Microsoft][SQL Server Native Client 10.0][SQL Server]Unable to open the physical file "\\\\ustxca00064sto.ad001.siemens.net\\grp$\\FSA01313088\\Jobs\\Automation\\Test\\MDT\\JobDB.mdf". Operating system error 5: "5(Access is denied.)". (5120) (SQLExecDirectW)')
+2020-07-24 13:46:30,979 'str' object has no attribute 'cursor'
+2020-07-24 13:47:21,260 ('42000', '[42000] [Microsoft][SQL Server Native Client 11.0][SQL Server]CREATE DATABASE statement not allowed within multi-statement transaction. (226) (SQLExecDirectW)')
+2020-07-24 14:02:14,728 ('42000', '[42000] [Microsoft][SQL Server Native Client 11.0][SQL Server]CREATE DATABASE statement not allowed within multi-statement transaction. (226) (SQLExecDirectW)')
+2020-07-24 14:06:15,145 ('42000', '[42000] [Microsoft][SQL Server Native Client 11.0][SQL Server]The path specified by "C:\\Users\\z003vrzk\\.spyder-py3\\Scripts\\Work\\PanelBuilder\\SQLTest\\JHW\\JobDB_Log.ldf" is not in a valid directory. (5121) (SQLExecDirectW)')
+2020-07-24 14:10:09,712 ('42000', '[42000] [Microsoft][SQL Server Native Client 11.0][SQL Server]The path specified by "C:\\Users\\z003vrzk\\.spyder-py3\\Scripts\\Work\\PanelBuilder\\panel-builder\\SQLTest\\JHW\\JobDB_Log.ldf" is not in a valid directory. (5121) (SQLExecDirectW)')
+2020-07-24 14:10:38,740 ('42000', '[42000] [Microsoft][SQL Server Native Client 11.0][SQL Server]The FOR ATTACH option requires that at least the primary file be specified. (1829) (SQLExecDirectW)')
+2020-07-24 14:13:34,524 Database PBJobDB removed
+2020-07-24 14:13:40,180 ('42000', '[42000] [Microsoft][SQL Server Native Client 11.0][SQL Server]The FOR ATTACH option requires that at least the primary file be specified. (1829) (SQLExecDirectW)')
+2020-07-24 14:15:15,673 ('42000', '[42000] [Microsoft][SQL Server Native Client 11.0][SQL Server]The FOR ATTACH option requires that at least the primary file be specified. (1829) (SQLExecDirectW)')
+2020-07-24 14:22:39,798 
+2020-07-24 14:22:39,839 ('42000', "[42000] [Microsoft][SQL Server Native Client 11.0][SQL Server]A file activation error occurred. The physical file name 'TestDB' may be incorrect. Diagnose and correct additional errors, and retry the operation. (5105) (SQLExecDirectW)")
+2020-07-24 14:22:50,031 ('42000', '[42000] [Microsoft][SQL Server Native Client 11.0][SQL Server]The FOR ATTACH option requires that at least the primary file be specified. (1829) (SQLExecDirectW)')
+2020-07-24 14:25:11,919 Database PBJobDB removed
+2020-07-24 14:25:23,888 Database PBJobDB removed
+2020-07-24 14:26:06,348 ('42000', '[42000] [Microsoft][SQL Server Native Client 11.0][SQL Server]The FOR ATTACH option requires that at least the primary file be specified. (1829) (SQLExecDirectW)')
+2020-07-24 14:33:18,621 ('42000', '[42000] [Microsoft][SQL Server Native Client 11.0][SQL Server]The FOR ATTACH option requires that at least the primary file be specified. (1829) (SQLExecDirectW)')
+2020-07-24 14:39:34,316 ('42000', '[42000] [Microsoft][SQL Server Native Client 11.0][SQL Server]The FOR ATTACH option requires that at least the primary file be specified. (1829) (SQLExecDirectW)')
+2020-07-24 14:42:20,935 Database PBJobDB removed
+2020-07-24 14:46:42,178 Database PBJobDB removed
+2020-07-24 14:49:13,767 Database PBJobDB removed
+2020-07-24 14:50:20,246 File name: C:\Users\z003vrzk\.spyder-py3\Scripts\Work\PanelBuilder\panel_builder\SQLTest\JHW\JobDB_Log.ldf is already in use
+Connect to existing database instead
+Existing Database : PBJobDB
+2020-07-24 14:50:20,246 File name: {} is already in use
+Connect to existing database instead
+Existing Database : PBJobDB
+2020-07-24 14:50:49,502 ('42000', '[42000] [Microsoft][SQL Server Native Client 11.0][SQL Server]The FOR ATTACH option requires that at least the primary file be specified. (1829) (SQLExecDirectW)')
+2020-07-24 14:51:06,686 ('42000', '[42000] [Microsoft][SQL Server Native Client 11.0][SQL Server]The FOR ATTACH option requires that at least the primary file be specified. (1829) (SQLExecDirectW)')
+2020-07-24 14:52:46,293 ('42000', '[42000] [Microsoft][SQL Server Native Client 11.0][SQL Server]The FOR ATTACH option requires that at least the primary file be specified. (1829) (SQLExecDirectW)')
+2020-07-24 15:04:33,319 File name: C:\Users\z003vrzk\.spyder-py3\Scripts\Work\PanelBuilder\panel_builder\SQLTest\JHW\JobDB_Log.ldf is already in use
+Connect to existing database instead
+Existing Database : PBJobDB
+2020-07-24 15:04:33,319 File name: {} is already in use
+Connect to existing database instead
+Existing Database : PBJobDB
+2020-07-24 15:04:48,378 ('42000', '[42000] [Microsoft][SQL Server Native Client 11.0][SQL Server]The FOR ATTACH option requires that at least the primary file be specified. (1829) (SQLExecDirectW)')
+2020-07-24 15:05:59,313 ('42000', "[42000] [Microsoft][SQL Server Native Client 11.0][SQL Server]Incorrect syntax near 'GO'. (102) (SQLExecDirectW)")
+2020-07-24 15:06:33,013 ('42000', '[42000] [Microsoft][SQL Server Native Client 11.0][SQL Server]The FOR ATTACH option requires that at least the primary file be specified. (1829) (SQLExecDirectW)')
+2020-07-24 15:09:28,140 File name: C:\Users\z003vrzk\.spyder-py3\Scripts\Work\PanelBuilder\panel_builder\SQLTest\JHW\JobDB_Log.ldf is already in use
+Connect to existing database instead
+Existing Database : Test
+2020-07-24 15:09:28,140 File name: {} is already in use
+Connect to existing database instead
+Existing Database : Test
+2020-07-24 15:09:38,602 File name: C:\Users\z003vrzk\.spyder-py3\Scripts\Work\PanelBuilder\panel_builder\SQLTest\JHW\JobDB_Log.ldf is already in use
+Connect to existing database instead
+Existing Database : Test
+2020-07-24 15:09:38,603 File name: {} is already in use
+Connect to existing database instead
+Existing Database : Test
+2020-07-24 15:09:53,401 ('42000', '[42000] [Microsoft][SQL Server Native Client 11.0][SQL Server]The FOR ATTACH option requires that at least the primary file be specified. (1829) (SQLExecDirectW)')
+2020-07-24 15:15:37,577 File name: C:\Users\z003vrzk\.spyder-py3\Scripts\Work\PanelBuilder\panel_builder\SQLTest\JHW\JobDB_Log.ldf is already in use
+Connect to existing database instead
+Existing Database : PBJobDB
+2020-07-24 15:15:37,577 File name: {} is already in use
+Connect to existing database instead
+Existing Database : PBJobDB
+2020-07-24 15:15:50,158 ('42000', '[42000] [Microsoft][SQL Server Native Client 11.0][SQL Server]The FOR ATTACH option requires that at least the primary file be specified. (1829) (SQLExecDirectW)')
+2020-07-24 15:22:25,678 
+2020-07-24 15:22:25,725 ('42000', "[42000] [Microsoft][SQL Server Native Client 11.0][SQL Server]Incorrect syntax near '\\'. (102) (SQLExecDirectW); [42000] [Microsoft][SQL Server Native Client 11.0][SQL Server]Incorrect syntax near '='. (102)")
+2020-07-24 15:24:21,987 ('42000', '[42000] [Microsoft][SQL Server Native Client 11.0][SQL Server]The FOR ATTACH option requires that at least the primary file be specified. (1829) (SQLExecDirectW)')
+2020-07-24 15:24:58,037 ('42000', '[42000] [Microsoft][SQL Server Native Client 11.0][SQL Server]The FOR ATTACH option requires that at least the primary file be specified. (1829) (SQLExecDirectW)')
+2020-07-24 15:26:53,381 File name: C:\Users\z003vrzk\.spyder-py3\Scripts\Work\PanelBuilder\panel_builder\SQLTest\JHW\JobDB_Log.ldf is already in use
+Connect to existing database instead
+Existing Database : PBJobDB
+2020-07-24 15:26:53,381 File name: {} is already in use
+Connect to existing database instead
+Existing Database : PBJobDB
+2020-07-24 15:26:58,775 Database PBJobDB removed
+2020-07-24 15:27:00,713 ('42000', '[42000] [Microsoft][SQL Server Native Client 11.0][SQL Server]The FOR ATTACH option requires that at least the primary file be specified. (1829) (SQLExecDirectW)')
+2020-07-24 15:43:39,878 ('42000', '[42000] [Microsoft][SQL Server Native Client 11.0][SQL Server]The FOR ATTACH option requires that at least the primary file be specified. (1829) (SQLExecDirectW)')
+2020-07-24 15:45:32,175 ('42000', '[42000] [Microsoft][SQL Server Native Client 11.0][SQL Server]The FOR ATTACH option requires that at least the primary file be specified. (1829) (SQLExecDirectW)')
+2020-07-24 16:45:14,795 ('42000', '[42000] [Microsoft][SQL Server Native Client 11.0][SQL Server]The FOR ATTACH option requires that at least the primary file be specified. (1829) (SQLExecDirectW)')
+2020-07-24 16:46:55,220 ('42000', '[42000] [Microsoft][SQL Server Native Client 11.0][SQL Server]The FOR ATTACH option requires that at least the primary file be specified. (1829) (SQLExecDirectW)')
+2020-07-24 16:52:54,039 name 'master_connection' is not defined
+2020-07-24 16:53:10,303 ('42000', '[42000] [Microsoft][SQL Server Native Client 11.0][SQL Server]The FOR ATTACH option requires that at least the primary file be specified. (1829) (SQLExecDirectW)')
+2020-07-24 17:00:27,567 File name: C:\Users\z003vrzk\.spyder-py3\Scripts\Work\PanelBuilder\panel_builder\SQLTest\JHW\JobDB_Log.ldf is already in use
+Connect to existing database instead
+Existing Database : PBJobDB
+2020-07-24 17:00:27,567 File name: {} is already in use
+Connect to existing database instead
+Existing Database : PBJobDB
+2020-07-24 17:00:41,959 ('42000', '[42000] [Microsoft][SQL Server Native Client 11.0][SQL Server]The FOR ATTACH option requires that at least the primary file be specified. (1829) (SQLExecDirectW)')
+2020-07-24 17:11:04,498 ('42000', '[42000] [Microsoft][SQL Server Native Client 11.0][SQL Server]The FOR ATTACH option requires that at least the primary file be specified. (1829) (SQLExecDirectW)')
+2020-07-24 17:39:33,325 ('42000', '[42000] [Microsoft][SQL Server Native Client 11.0][SQL Server]The FOR ATTACH option requires that at least the primary file be specified. (1829) (SQLExecDirectW)')
+2020-07-24 17:44:47,268 ('42000', '[42000] [Microsoft][SQL Server Native Client 11.0][SQL Server]The FOR ATTACH option requires that at least the primary file be specified. (1829) (SQLExecDirectW)')
+2020-07-24 17:52:44,559 ('42000', '[42000] [Microsoft][SQL Server Native Client 11.0][SQL Server]The FOR ATTACH option requires that at least the primary file be specified. (1829) (SQLExecDirectW)')
+2020-07-24 17:53:49,773 ('42000', '[42000] [Microsoft][SQL Server Native Client 11.0][SQL Server]The FOR ATTACH option requires that at least the primary file be specified. (1829) (SQLExecDirectW)')
+2020-07-24 17:54:21,832 'SQLTest' object has no attribute 'get_pyodbc_master_connection_str'
+2020-07-24 17:54:50,341 'str' object is not callable
+2020-07-24 17:55:08,297 Database : PBJobDB connected
+2020-07-24 17:56:16,239 File name: C:\Users\z003vrzk\.spyder-py3\Scripts\Work\PanelBuilder\panel_builder\SQLTest\JHW\JobDB_Log.ldf is already in use
+Connect to existing database instead
+Existing Database : PBJobDB
+2020-07-24 17:56:16,239 File name: {} is already in use
+Connect to existing database instead
+Existing Database : PBJobDB
+2020-07-24 17:56:26,177 ('42000', '[42000] [Microsoft][SQL Server Native Client 11.0][SQL Server]The FOR ATTACH option requires that at least the primary file be specified. (1829) (SQLExecDirectW)')
+2020-07-24 17:56:37,744 Database : PBJobDB connected
+2020-07-24 17:57:45,852 ('42000', '[42000] [Microsoft][SQL Server Native Client 11.0][SQL Server]The FOR ATTACH option requires that at least the primary file be specified. (1829) (SQLExecDirectW)')
+2020-07-24 17:58:08,405 Database : PBJobDB connected
+2020-07-24 17:58:42,677 ('42000', '[42000] [Microsoft][SQL Server Native Client 11.0][SQL Server]The FOR ATTACH option requires that at least the primary file be specified. (1829) (SQLExecDirectW)')
+2020-07-24 17:58:48,923 ('42000', '[42000] [Microsoft][SQL Server Native Client 11.0][SQL Server]The FOR ATTACH option requires that at least the primary file be specified. (1829) (SQLExecDirectW)')
+2020-07-24 17:59:41,358 ('42000', '[42000] [Microsoft][SQL Server Native Client 11.0][SQL Server]The FOR ATTACH option requires that at least the primary file be specified. (1829) (SQLExecDirectW)')
+2020-07-24 18:00:42,502 ('42000', '[42000] [Microsoft][SQL Server Native Client 11.0][SQL Server]The FOR ATTACH option requires that at least the primary file be specified. (1829) (SQLExecDirectW)')
+2020-07-24 18:01:48,063 ('42000', '[42000] [Microsoft][SQL Server Native Client 11.0][SQL Server]The FOR ATTACH option requires that at least the primary file be specified. (1829) (SQLExecDirectW)')
+2020-07-24 18:01:50,921 ('42000', '[42000] [Microsoft][SQL Server Native Client 11.0][SQL Server]The FOR ATTACH option requires that at least the primary file be specified. (1829) (SQLExecDirectW)')
+2020-07-24 18:02:12,032 ('42000', '[42000] [Microsoft][SQL Server Native Client 11.0][SQL Server]The FOR ATTACH option requires that at least the primary file be specified. (1829) (SQLExecDirectW)')
+2020-07-24 18:02:43,914 ('42000', '[42000] [Microsoft][SQL Server Native Client 11.0][SQL Server]The FOR ATTACH option requires that at least the primary file be specified. (1829) (SQLExecDirectW)')
+2020-07-24 18:04:07,133 ('42000', '[42000] [Microsoft][SQL Server Native Client 11.0][SQL Server]The FOR ATTACH option requires that at least the primary file be specified. (1829) (SQLExecDirectW)')
+2020-07-24 18:04:34,855 ('42000', '[42000] [Microsoft][SQL Server Native Client 11.0][SQL Server]The FOR ATTACH option requires that at least the primary file be specified. (1829) (SQLExecDirectW)')
+2020-07-24 18:04:55,289 Database : PBJobDB connected
+2020-07-24 18:19:58,987 File name: C:\Users\z003vrzk\.spyder-py3\Scripts\Work\PanelBuilder\panel_builder\SQLTest\JHW\JobDB.mdf is already in use
+Connect to existing database instead
+Existing Database : PBJobDB
+2020-07-24 18:19:58,987 File name: {} is already in use
+Connect to existing database instead
+Existing Database : PBJobDB
+2020-07-24 18:20:10,765 Database : PBJobDB connected
+2020-07-24 18:22:46,207 Database : PBJobDB connected
+2020-07-24 18:27:01,198 Database name: PBJobDB is already in use.  Try a new name instead
+2020-07-24 18:27:01,198 Database name: PBJobDB is already in use.  Try a new name instead
+2020-07-24 18:27:14,209 Database : PBJobDB connected
+2020-07-24 18:45:32,061 Database : PBJobDB connected

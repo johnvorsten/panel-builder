@@ -201,13 +201,14 @@ class MainWindowActions():
             msgBox.setWindowIcon(self.context.alarm_icon)
             msgBox.exec()
 
-
         # Change the displayed job file name
-        self.path_mdf = path_mdf.__str__()
-        self.path_ldf = path_ldf.__str__()
-        self.path_j_vars = j_vars_path.__str__()
+        self.context.path_mdf = path_mdf.__str__()
+        self.context.path_ldf = path_ldf.__str__()
+        self.context.path_j_vars = j_vars_path.__str__()
+
+
         self.MyWindowDialog.findChild(QLineEdit, 'JobPathTextEdit')\
-            .setText(self.path_mdf)
+            .setText(self.context.path_mdf)
 
         return None
 
@@ -233,22 +234,22 @@ class MainWindowActions():
         set any data in the class that will be needed for job processing,
         including the selected job path"""
 
-        if 'path_mdf' not in self.__dict__:
+        if 'path_mdf' not in self.context.__dict__:
             self.action_show_select_job_message()
 
-        elif self.path_mdf is None:
+        elif self.context.path_mdf is None:
             self.action_show_select_job_message()
 
-        elif not Path(self.path_mdf).is_file():
+        elif not Path(self.context.path_mdf).is_file():
             self.action_show_select_job_message()
 
         else:
-            self.MyReportDialog = ReportDialog(self.context)
-            self.MyReportDialog.path_mdf_Signal.emit(self.path_mdf)
-            self.MyReportDialog.path_ldf_Signal.emit(self.path_ldf)
-            self.MyReportDialog.path_j_vars_Signal.emit(self.path_j_vars)
-            self.MyReportDialog.init_system_scrollSignal.emit()
-            self.MyReportDialog.exec()
+            self.ReportDialog = ReportDialog(self.context)
+            # self.MyReportDialog.path_mdf_Signal.emit(self.path_mdf)
+            # self.MyReportDialog.path_ldf_Signal.emit(self.path_ldf)
+            # self.MyReportDialog.path_j_vars_Signal.emit(self.path_j_vars)
+            self.ReportDialog.init_system_scrollSignal.emit()
+            self.ReportDialog.exec()
 
         return None
 

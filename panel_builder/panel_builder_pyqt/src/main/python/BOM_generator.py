@@ -14,11 +14,10 @@ from datetime import datetime
 # Third party imports
 import pandas as pd
 import os
-import numpy as np
 import xlsxwriter
 
 # local imports
-from DT_sql_tools_v6 import SQLHandling
+from sql_tools import SQLBase
 from BOM_formatting import BOMFormat
 
 # Instantiate classes
@@ -52,7 +51,7 @@ class BOMGenerator():
         """
 
         #Begin SQL connection to import data
-        self.MySQLHandler = SQLHandling(server_name=server_name,
+        self.SQLBase = SQLBase(server_name=server_name,
                                       driver_name=driver_name)
 
         """If a database is already attached then file_used_bool will be True
@@ -60,7 +59,7 @@ class BOMGenerator():
         existing_database_name is a string if file_used_bool is True"""
         (file_used_bool,
          name_used_bool,
-         existing_database_name) = self.MySQLHandler\
+         existing_database_name) = self.SQLBase\
             .check_existing_database(path_mdf, database_name)
 
         if file_used_bool:
@@ -72,32 +71,30 @@ class BOMGenerator():
             now = datetime.now()
             database_name = database_name + now.strftime('%m%d%H%M%S')
             self.database_name = database_name
-            self.MySQLHandler.attach_database(path_mdf,
+            self.SQLBase.attach_database(path_mdf,
                                               database_name=database_name,
                                               path_ldf=path_ldf)
         else:
             self.database_name = database_name
-            self.MySQLHandler.attach_database(path_mdf,
+            self.SQLBase.attach_database(path_mdf,
                                               database_name=database_name,
                                               path_ldf=path_ldf)
 
         # Instantiate a BOMFormat class
-        self.MyBOMFormat = BOMFormat(path_j_vars)
-
+        self.BOMFormat = BOMFormat(path_j_vars)
         return None
 
 
     def get_DEVICES_dataframe(self):
         """Retrieve the DEVICE table from database_name"""
-        device_df = self.MySQLHandler.read_table(self.database_name,
+        device_df = self.SQLBase.read_table(self.database_name,
                                                    'DEVICES')
-
         return device_df
 
 
     def get_unique_systems(self):
-        """Return a list of unique systems from the database initially connected
-        by the instance"""
+        """Return a list of unique systems from the database initially
+        connected by the instance"""
 
         database_name = self.database_name
         sql = """
@@ -105,7 +102,7 @@ class BOMGenerator():
         FROM [{db_name}].[dbo].[DEVICES]
         GROUP BY [SYSTEM]""".format(db_name=database_name)
 
-        df = self.MySQLHandler.pandas_read_sql(sql, database_name)
+        df = self.SQLBase.pandas_read_sql(sql, database_name)
 
         return df['SYSTEM'].to_list()
 
@@ -115,12 +112,20 @@ class BOMGenerator():
         This BASIC report only outputs part number, quantity, and description
         parameters
         -------
-        partsDataFrame : dataframe of part, quantity, description to save to excel format"""
+        partsDataFrame : dataframe of part, quantity, description to save to
+        excel format"""
         writer = pd.ExcelWriter('BOM_Report.xlsx', engine='xlsxwriter')
 
-        partsDataFrame.to_excel(writer, sheet_name=systemName, startrow= 0, startcol= 0, header=True, index=True)
+        partsDataFrame.to_excel(writer,
+                                sheet_name=systemName,
+                                startrow= 0,
+                                startcol= 0,
+                                header=True,
+                                index=True)
         writer.save()
-        report_path = os.path.join(os.getcwd(), 'reports', 'BOM_Report_basic.xlsx')
+        report_path = os.path.join(os.getcwd(),
+                                   'reports',
+                                   'BOM_Report_basic.xlsx')
         os.system('start EXCEL.EXE ' + report_path)
 
         return None
@@ -152,7 +157,7 @@ class BOMGenerator():
                 where [name] = 'ProductDB'"""
 
 
-        df = self.MySQLHandler.pandas_read_sql(sql, 'master')
+        df = self.SQLBase.pandas_read_sql(sql, 'master')
         if df.shape[0] == 0:
             return None
         else:
@@ -211,8 +216,7 @@ class BOMGenerator():
                                     system=system,
                                     product_db=prodcut_db)
 
-        df = self.MySQLHandler.pandas_read_sql(sql_aggregate,
-                                                 database_name)
+        df = self.SQLBase.pandas_read_sql(sql_aggregate, database_name)
 
         # Clean nan values
         for row in df.itertuples(index=True):
@@ -243,8 +247,8 @@ class BOMGenerator():
     @staticmethod
     def _get_bom_price_formula(col_start, row_start, col_end, row_end):
         """Return an excel formula to find the sum of a range of cells
-        The range of cells is variable based on number of parts and where the formula
-        should be inserted
+        The range of cells is variable based on number of parts and
+        where the formula should be inserted
         col_start : (str) letter of column
         row_start : (int or str) start row (0 indexed like xlswriter)
         col_end : (str) letter of column to stop summing at
@@ -312,7 +316,7 @@ class BOMGenerator():
         cell_format_red = workbook.add_format({'bg_color':   '#FFC7CE'})
 
         # Head cells are written once for the 'header' of the report
-        head_cells = self.MyBOMFormat._generate_doc_header_std(head_start_row=head_start)
+        head_cells = self.BOMFormat._generate_doc_header_std(head_start_row=head_start)
         # Write header data
         for row, col, data, formatDict in head_cells:
             worksheet.write(row, col, data, workbook.add_format(formatDict))
@@ -336,7 +340,7 @@ class BOMGenerator():
 
             # Write node data (BOM header)
             # This report style will include (1) Node cost, and a name
-            node_cells = self.MyBOMFormat.\
+            node_cells = self.BOMFormat.\
                 _generate_node_header_std(system_name, node_start_row=0)
             for row, col, data, formatDict in node_cells:
                 worksheet.write(row + current_row, col, data, workbook.add_format(formatDict))
@@ -436,7 +440,7 @@ class BOMGenerator():
         cell_format_red = workbook.add_format({'bg_color':   '#FFC7CE'})
 
         # Head cells are written once for the 'header' of the report
-        head_cells = self.MyBOMFormat._generate_doc_header_larson(head_start_row=head_start)
+        head_cells = self.BOMFormat._generate_doc_header_larson(head_start_row=head_start)
 
         # Write header data
         for row, col, data, formatDict in head_cells:
@@ -460,7 +464,7 @@ class BOMGenerator():
                 parts_df.drop(index=index, inplace=True)
 
             # Write node data (A header for each individual BOM node)
-            node_cells = self.MyBOMFormat.\
+            node_cells = self.BOMFormat.\
                 _generate_node_header_larson(system_name, node_start_row=0)
             for row, col, data, formatDict in node_cells:
                 worksheet.write(row + current_row,
@@ -562,7 +566,7 @@ class BOMGenerator():
 
         # Generate document header and configure each report style
         if style == 'larson':
-            head_cells = self.MyBOMFormat._generate_doc_header_larson(head_start)
+            head_cells = self.BOMFormat._generate_doc_header_larson(head_start)
             # Initial Values
             head_start = 0 # Where to start printing main head
             node_start = 0 # Where to start printing
@@ -571,7 +575,7 @@ class BOMGenerator():
             blank_rows = 2 # Number of blank between nodes
 
         elif style == 'standard':
-            head_cells = self.MyBOMFormat._generate_doc_header_std(head_start_row=head_start)
+            head_cells = self.BOMFormat._generate_doc_header_std(head_start_row=head_start)
             # Initial Values
             head_start = 0 # Where to start printing main head
             node_start = 0 # Where to start printing

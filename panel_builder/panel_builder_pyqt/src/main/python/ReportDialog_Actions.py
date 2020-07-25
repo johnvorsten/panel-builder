@@ -22,7 +22,6 @@ from BOM_generator import BOMGenerator
 
 class ReportDialogActions:
 
-
     def __init__(self):
         return None
 
@@ -44,19 +43,19 @@ class ReportDialogActions:
     @pyqtSlot(str)
     def set_path_mdf(self, path_mdf):
         """Set the database path chosen by the user"""
-        self.path_mdf = path_mdf
+        # self.path_mdf = path_mdf
         return None
 
     @pyqtSlot(str)
     def set_path_ldf(self, path_ldf):
         """Set the database log file path chosen by the user"""
-        self.path_ldf = path_ldf
+        # self.path_ldf = path_ldf
         return None
 
     @pyqtSlot(str)
     def set_path_j_vars(self, path_j_vars):
         """Set the job variable ini path chosen by the user"""
-        self.path_j_vars = path_j_vars
+        # self.path_j_vars = path_j_vars
         return None
 
     @pyqtSlot()
@@ -113,12 +112,14 @@ class ReportDialogActions:
         if self.allSystemsButton.isChecked():
             # Return every system in the job database
             selected_systems = self._get_database_BOM_systems()
+
         elif self.selectSystemsButton.isChecked():
             selected_systems = []
             for i in range(self.systemCheckLayoutArea.count()):
                 checkbox = self.systemCheckLayoutArea.itemAt(i)
                 if isinstance(checkbox, QCheckBox):
                     selected_systems.append(checkbox.objectName)
+
         else:
             msg = ('You must indicate All Systems or Individual systems' +
                    ' before you generate a report. Do you want to default to' +
@@ -151,12 +152,19 @@ class ReportDialogActions:
     def _init_BOM_generator(self):
         """Instantiate a BOM generator class for generating reports and filling
         the UI"""
-        self.BomGenerator = BOMGenerator(path_mdf=self.path_mdf,
-                                         path_ldf=self.path_ldf,
-                                         path_j_vars=self.path_j_vars,
-                                         server_name='.\DT_SQLEXPR2008',
-                                         driver_name='SQL Server Native Client 10.0',
-                                         database_name='PBJobDB')
+        path_mdf = self.context.path_mdf
+        path_ldf = self.context.path_ldf
+        path_j_vars = self.context.path_j_vars
+        server_name = self.context.server_name
+        driver_name = self.context.driver_name
+        database_name = self.context.database_name
+
+        self.BomGenerator = BOMGenerator(path_mdf=path_mdf,
+                                         path_ldf=path_ldf,
+                                         path_j_vars=path_j_vars,
+                                         server_name=server_name,
+                                         driver_name=driver_name,
+                                         database_name=database_name)
         return None
 
     def _get_database_BOM_systems(self):
