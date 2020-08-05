@@ -11,18 +11,30 @@ import sys
 # Third party imports
 from fbs_runtime.application_context.PyQt5 import (ApplicationContext,
                    cached_property)
-from PyQt5.QtWidgets import (QMainWindow, QApplication, QDialog, QFileDialog,
-                             QMessageBox, QLineEdit, QCheckBox,
-                             QVBoxLayout)
+from PyQt5.QtWidgets import QDialog
 from PyQt5.QtGui import QIcon
 
 # Local imports
+"""Import your generic Ui_Name here
+If you create a gerneric dialog description using Qt Designer, sometimes we
+want to see how it will look, and how to add dymanic widgets to the dialog
+
+This script will guide myself through testing a generic dialog straight from
+Qt Designer"""
 from Ui_OptionsDialog import Ui_OptionsDialog
 
 
 
 #%%
 
+"""This Dialog class definition assumes that application context is being
+passed
+
+I will use the existing FBS job, and create a simple application context to
+launch the dialog
+
+I will also text any 'global' context that needs to be passed
+to the dialog"""
 class OptionsDialog(QDialog, Ui_OptionsDialog):
     # TODO Create and import inheirited files
     def __init__(self, context):

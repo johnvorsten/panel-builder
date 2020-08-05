@@ -85,6 +85,6 @@ class Ui_OptionsDialog(object):
         self.sqlDriverComboBox.setItemText(0, _translate("OptionsDialog", "SQL Server Native Client 11.0"))
         self.sqlDriverComboBox.setItemText(1, _translate("OptionsDialog", "SQL Server Native Client 10.0"))
         self.JobFolderText.setText(_translate("OptionsDialog", "C:\\"))
-        self.SQLHostText.setText(_translate("OptionsDialog", "./DT_SQLEXPRESS"))
+        self.SQLHostText.setText(_translate("OptionsDialog", "DT_SQLEXPRESS"))
         self.ProductDBText.setText(_translate("OptionsDialog", "C:\\Program Files\\DesignTool\\Products"))
 

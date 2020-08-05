@@ -16,9 +16,10 @@ from PyQt5.QtCore import (pyqtSlot, pyqtSignal)
 
 # Local imports
 from BOM_generator import BOMGenerator
-
+from Ui_ReportDialog import Ui_ReportDialog
 
 #%%
+
 
 class ReportDialogActions:
 
@@ -35,9 +36,12 @@ class ReportDialogActions:
         choice = msgBox.exec()
 
         if choice == QMessageBox.Yes:
+            if 'database_connection' in self.context.SQLBase.__dict__:
+                self.context.SQLBase.database_connection.close()
             self.close()
         else:
             pass
+
         return None
 
     @pyqtSlot(str)
@@ -58,7 +62,6 @@ class ReportDialogActions:
         # self.path_j_vars = path_j_vars
         return None
 
-    @pyqtSlot()
     def _init_systems_scroll(self):
         """Show a list of systems under the scroll box
         The tree shows widget and layout nesting, but inheiritance is not
@@ -75,10 +78,12 @@ class ReportDialogActions:
                             QCheckBox
 
         """
-        unique_systems = self._get_database_BOM_systems()
-
+        # Get a unique list of systems to display on UI
+        unique_systems = self.get_unique_systems(self.context.database_name)
+        # Layout to display unique systems on
         self.systemCheckLayoutArea = QVBoxLayout(self.scrollAreaWidgetContents)
 
+        # Add all systems to layout
         for str_system in unique_systems:
             systemCheckBox = QCheckBox(str_system)
             systemCheckBox.setObjectName(str_system)
@@ -92,10 +97,11 @@ class ReportDialogActions:
 
         return None
 
-    # Data processing Logic ------------- move to separate thread later
+
+    # Data processing Logic --- TODO move to separate thread later
     def _get_retro_flags(self):
         """At report generation time get the retro flags for which parts to include
-        in the report. See BOM_generator.py at BOMGenerator.generate_fancy_report"""
+        in the report"""
         retro_list = ['IS NULL']
 
         if self.ETRCheckBox.isChecked():
@@ -105,13 +111,14 @@ class ReportDialogActions:
 
         return retro_list
 
+
     def _get_selected_BOM_systems(self):
         """Get a list of unique systems from the left layout group
         see self.systemGroupBox and self.systemScrollBox"""
 
         if self.allSystemsButton.isChecked():
             # Return every system in the job database
-            selected_systems = self._get_database_BOM_systems()
+            selected_systems = self.get_unique_systems(self.context.database_name)
 
         elif self.selectSystemsButton.isChecked():
             selected_systems = []
@@ -141,6 +148,7 @@ class ReportDialogActions:
 
         return selected_systems
 
+
     def _get_report_style(self):
         """Get the selected report style from styleTypeComboBox
         see self.styleTypeComboBox"""
@@ -149,34 +157,59 @@ class ReportDialogActions:
 
         return report_style
 
+
     def _init_BOM_generator(self):
         """Instantiate a BOM generator class for generating reports and filling
         the UI"""
         path_mdf = self.context.path_mdf
         path_ldf = self.context.path_ldf
         path_j_vars = self.context.path_j_vars
-        server_name = self.context.server_name
-        driver_name = self.context.driver_name
         database_name = self.context.database_name
 
         self.BomGenerator = BOMGenerator(path_mdf=path_mdf,
                                          path_ldf=path_ldf,
                                          path_j_vars=path_j_vars,
-                                         server_name=server_name,
-                                         driver_name=driver_name,
-                                         database_name=database_name)
+                                         database_name=database_name,
+                                         SQLBase=self.context.SQLBase,)
         return None
 
-    def _get_database_BOM_systems(self):
-        """Read a SQL job database for a list of unique BOM systems. Use this
-        to generate a list of systems for the BOM reporting screen"""
 
-        if 'BomGenerator' not in self.__dict__:
-            self._init_BOM_generator()
+    def get_unique_systems(self, database_name):
+        """Return a list of unique systems from the database initially
+        connected by the instance"""
 
-        unique_systems = self.BomGenerator.get_unique_systems()
+        sql = """
+        SELECT [SYSTEM]
+        FROM [{db_name}].[dbo].[DEVICES]
+        GROUP BY [SYSTEM]""".format(db_name=database_name)
 
-        return unique_systems
+        df = self.context.SQLBase.pandas_execute_sql(sql)
+
+        return df['SYSTEM'].to_list()
+
+
+    def get_product_database_name(self):
+        """Return the database name (not logical or physical) of the associated
+        products database. The product database has the logical_name 'ProductDB'
+        in SQL server express"""
+
+
+        sql = """select t1.[name] as logical_name, t1.physical_name,
+                    (select name
+                    from [master].[sys].[databases] as t2
+                    where t2.database_id = t1.database_id) as [database_name]
+                FROM [master].[sys].[master_files] as t1
+                where [name] = 'ProductDB'"""
+
+
+        df = self.context.SQLBase.pandas_execute_sql(sql)
+        if df.shape[0] == 0:
+            return None
+        else:
+            product_database_name = df.loc[0, 'database_name']
+
+        return product_database_name
+
 
     def _generate_report(self):
         """Start to make the BOM report..."""
@@ -184,6 +217,7 @@ class ReportDialogActions:
             selected_systems = self._get_selected_BOM_systems()
             retro_flags = self._get_retro_flags()
             report_style = self._get_report_style()
+            product_db = self.get_product_database_name()
 
             msg = ('Your report is being generated and should auto-open when' +
                    ' finished. This may take longer on larger jobs. Select "Ok"' +
@@ -199,14 +233,16 @@ class ReportDialogActions:
             if choice == QMessageBox.Ok:
                 if report_style == 'OG Larson':
                     self.BomGenerator.generate_report_larson(retro_flags,
-                                                            selected_systems)
+                                                             selected_systems,
+                                                             product_db)
                 elif report_style == 'Standard':
                     self.BomGenerator.generate_report_standard(retro_flags,
-                                                            selected_systems)
+                                                               selected_systems,
+                                                               product_db)
                 else:
-                    event.ignore()
+                    pass
             else:
-                event.ignore()
+                pass
 
         except Exception as e:
             logging.debug(e)
@@ -223,5 +259,60 @@ class ReportDialogActions:
             msgBox.setStandardButtons(QMessageBox.Ok)
             msgBox.setDefaultButton(QMessageBox.Ok)
             choice = msgBox.exec()
+
+        return None
+
+
+class ReportDialog(QDialog, Ui_ReportDialog, ReportDialogActions):
+
+    def __init__(self, context):
+        super(ReportDialog, self).__init__()
+
+        # Context manager
+        self.context = context
+
+        # Set user interface from Designer
+        self.setupUi(self)
+        self.setWindowIcon(self.context.report_icon)
+        self.setWindowTitle('PB Reports')
+
+        # Connect to specific database with SQLBase
+        path_mdf = self.context.path_mdf
+        path_ldf = self.context.path_ldf
+        database_name = self.context.database_name
+        self.context.init_sql_database_connection(path_mdf,
+                                                  path_ldf,
+                                                  database_name)
+
+        # Update ui with dynamic stuff
+        self.init_ui()
+
+        return None
+
+    def init_ui(self):
+        """Generate the default report dialog view and add
+        signals and slots"""
+
+        # Add a report type to the combo box
+        self.reportTypeComboBox.addItem('BOM Report')
+
+        # Add style to combo box
+        self.styleTypeComboBox.addItem('OG Larson')
+        self.styleTypeComboBox.addItem('Standard')
+        self.styleTypeComboBox.setCurrentIndex(1)
+
+        # Connect cancel button with close UI
+        self.cancelButton.clicked.connect(self._close_application)
+
+        # Connect other buttons
+        self.allSystemsButton.clicked\
+            .connect(lambda x : self.systemGroupBox.setEnabled(False))
+        self.selectSystemsButton.clicked\
+            .connect(lambda x : self.systemGroupBox.setEnabled(True))
+        self.generateReportButton.clicked\
+            .connect(self._generate_report)
+
+        # Generate Systems view
+        self._init_systems_scroll()
 
         return None

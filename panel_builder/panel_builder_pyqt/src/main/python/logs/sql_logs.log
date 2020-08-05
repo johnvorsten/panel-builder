@@ -275,3 +275,69 @@ Existing Database : PBJobDB
 2020-07-24 18:27:01,198 Database name: PBJobDB is already in use.  Try a new name instead
 2020-07-24 18:27:14,209 Database : PBJobDB connected
 2020-07-24 18:45:32,061 Database : PBJobDB connected
+2020-07-27 08:33:10,034 ('08001', '[08001] [Microsoft][SQL Server Native Client 10.0]SQL Server Network Interfaces: Error Locating Server/Instance Specified [xFFFFFFFF].  (-1) (SQLDriverConnect); [08001] [Microsoft][SQL Server Native Client 10.0]Login timeout expired (0); [08001] [Microsoft][SQL Server Native Client 10.0]A network-related or instance-specific error has occurred while establishing a connection to SQL Server. Server is not found or not accessible. Check if instance name is correct and if SQL Server is configured to allow remote connections. For more information see SQL Server Books Online. (-1)')
+2020-07-27 11:56:11,472 ('08001', '[08001] [Microsoft][SQL Server Native Client 11.0]TCP Provider: No such host is known.\r\n (11001) (SQLDriverConnect); [08001] [Microsoft][SQL Server Native Client 11.0]Login timeout expired (0); [08001] [Microsoft][SQL Server Native Client 11.0]A network-related or instance-specific error has occurred while establishing a connection to SQL Server. Server is not found or not accessible. Check if instance name is correct and if SQL Server is configured to allow remote connections. For more information see SQL Server Books Online. (11001)')
+2020-07-27 11:57:49,605 ('08001', '[08001] [Microsoft][SQL Server Native Client 11.0]TCP Provider: No such host is known.\r\n (11001) (SQLDriverConnect); [08001] [Microsoft][SQL Server Native Client 11.0]Login timeout expired (0); [08001] [Microsoft][SQL Server Native Client 11.0]A network-related or instance-specific error has occurred while establishing a connection to SQL Server. Server is not found or not accessible. Check if instance name is correct and if SQL Server is configured to allow remote connections. For more information see SQL Server Books Online. (11001)')
+2020-07-27 11:58:26,736 ('08001', '[08001] [Microsoft][SQL Server Native Client 11.0]TCP Provider: No such host is known.\r\n (11001) (SQLDriverConnect); [08001] [Microsoft][SQL Server Native Client 11.0]Login timeout expired (0); [08001] [Microsoft][SQL Server Native Client 11.0]A network-related or instance-specific error has occurred while establishing a connection to SQL Server. Server is not found or not accessible. Check if instance name is correct and if SQL Server is configured to allow remote connections. For more information see SQL Server Books Online. (11001)')
+2020-07-27 12:23:23,840 ('42000', '[42000] [Microsoft][SQL Server Native Client 11.0][SQL Server]Unable to open the physical file "D:\\Jobs\\292103_BAU_UT_SZB_5th_Floor\\DesignTool\\MDT\\JobDB.mdf". Operating system error 32: "32(The process cannot access the file because it is being used by another process.)". (5120) (SQLExecDirectW); [42000] [Microsoft][SQL Server Native Client 11.0][SQL Server]CREATE DATABASE failed. Some file names listed could not be created. Check related errors. (1802)')
+2020-07-27 12:28:31,960 ('42000', '[42000] [Microsoft][SQL Server Native Client 11.0][SQL Server]Unable to open the physical file "D:\\Jobs\\292103_BAU_UT_SZB_5th_Floor\\DesignTool\\MDT\\JobDB.mdf". Operating system error 32: "32(The process cannot access the file because it is being used by another process.)". (5120) (SQLExecDirectW); [42000] [Microsoft][SQL Server Native Client 11.0][SQL Server]CREATE DATABASE failed. Some file names listed could not be created. Check related errors. (1802)')
+2020-07-27 13:26:55,948 ('28000', '[28000] [Microsoft][SQL Server Native Client 11.0][SQL Server]Login failed for user \'AD001\\z003vrzk\'. (18456) (SQLDriverConnect); [28000] [Microsoft][SQL Server Native Client 11.0][SQL Server]Cannot open database "PBJobsDB" requested by the login. The login failed. (4060); [28000] [Microsoft][SQL Server Native Client 11.0][SQL Server]Login failed for user \'AD001\\z003vrzk\'. (18456); [28000] [Microsoft][SQL Server Native Client 11.0][SQL Server]Cannot open database "PBJobsDB" requested by the login. The login failed. (4060)')
+2020-08-05 10:50:31,975 ('42000', '[42000] [Microsoft][SQL Server Native Client 11.0][SQL Server]Unable to open the physical file "D:\\Jobs\\292812_BAU_DCMC_OR_2_3_CHW_Coils\\DesignTool\\MDT\\JobDB.mdf". Operating system error 32: "32(The process cannot access the file because it is being used by another process.)". (5120) (SQLExecDirectW); [42000] [Microsoft][SQL Server Native Client 11.0][SQL Server]CREATE DATABASE failed. Some file names listed could not be created. Check related errors. (1802)')
+2020-08-05 10:59:24,003 Database name: PBJobDB is already in use.  Try a new name instead
+2020-08-05 10:59:24,003 Database name: PBJobDB is already in use.  Try a new name instead
+2020-08-05 10:59:24,012 ('42000', "[42000] [Microsoft][SQL Server Native Client 11.0][SQL Server]Incorrect syntax near '\\'. (102) (SQLExecDirectW); [42000] [Microsoft][SQL Server Native Client 11.0][SQL Server]Incorrect syntax near the keyword 'with'. If this statement is a common table expression, an xmlnamespaces clause or a change tracking context clause, the previous statement must be terminated with a semicolon. (319)")
+2020-08-05 11:04:47,839 Database : PBJobDB_test connected
+2020-08-05 11:05:10,051 Database PBJobDB_test removed
+2020-08-05 11:07:09,941 ('42000', "[42000] [Microsoft][SQL Server Native Client 11.0][SQL Server]Incorrect syntax near '\\'. (102) (SQLExecDirectW); [42000] [Microsoft][SQL Server Native Client 11.0][SQL Server]Incorrect syntax near the keyword 'with'. If this statement is a common table expression, an xmlnamespaces clause or a change tracking context clause, the previous statement must be terminated with a semicolon. (319)")
+2020-08-05 11:07:10,560 Database PBJobDB removed
+2020-08-05 11:10:28,885 Database : PBJobDB_test connected
+2020-08-05 11:10:29,357 Database PBJobDB_test removed
+2020-08-05 11:10:29,364 ('42000', "[42000] [Microsoft][SQL Server Native Client 11.0][SQL Server]Incorrect syntax near '\\'. (102) (SQLExecDirectW); [42000] [Microsoft][SQL Server Native Client 11.0][SQL Server]Incorrect syntax near the keyword 'with'. If this statement is a common table expression, an xmlnamespaces clause or a change tracking context clause, the previous statement must be terminated with a semicolon. (319)")
+2020-08-05 11:15:31,613 ('28000', '[28000] [Microsoft][SQL Server Native Client 11.0][SQL Server]Login failed for user \'AD001\\z003vrzk\'. (18456) (SQLDriverConnect); [28000] [Microsoft][SQL Server Native Client 11.0][SQL Server]Cannot open database "PBJobDB_test" requested by the login. The login failed. (4060); [28000] [Microsoft][SQL Server Native Client 11.0][SQL Server]Login failed for user \'AD001\\z003vrzk\'. (18456); [28000] [Microsoft][SQL Server Native Client 11.0][SQL Server]Cannot open database "PBJobDB_test" requested by the login. The login failed. (4060)')
+2020-08-05 11:16:02,327 Database : PBJobDB_test connected
+2020-08-05 11:17:44,005 Database PBJobDB_test removed
+2020-08-05 11:17:44,219 Database : PBJobDB_test connected
+2020-08-05 11:17:44,664 Database PBJobDB_test removed
+2020-08-05 11:17:44,671 ('42000', "[42000] [Microsoft][SQL Server Native Client 11.0][SQL Server]Incorrect syntax near '\\'. (102) (SQLExecDirectW); [42000] [Microsoft][SQL Server Native Client 11.0][SQL Server]Incorrect syntax near the keyword 'with'. If this statement is a common table expression, an xmlnamespaces clause or a change tracking context clause, the previous statement must be terminated with a semicolon. (319)")
+2020-08-05 11:17:44,875 Database : PBJobDB_test connected
+2020-08-05 11:17:45,285 Database PBJobDB_test removed
+2020-08-05 11:17:45,518 Database : PBJobDB_test connected
+2020-08-05 11:22:17,273 Database PBJobDB_test removed
+2020-08-05 11:22:17,449 Database : PBJobDB_test connected
+2020-08-05 11:22:17,890 Database PBJobDB_test removed
+2020-08-05 11:22:17,898 ('42000', "[42000] [Microsoft][SQL Server Native Client 11.0][SQL Server]Incorrect syntax near '\\'. (102) (SQLExecDirectW); [42000] [Microsoft][SQL Server Native Client 11.0][SQL Server]Incorrect syntax near the keyword 'with'. If this statement is a common table expression, an xmlnamespaces clause or a change tracking context clause, the previous statement must be terminated with a semicolon. (319)")
+2020-08-05 11:22:18,127 Database : PBJobDB_test connected
+2020-08-05 11:22:18,578 Database PBJobDB_test removed
+2020-08-05 11:22:18,814 Database : PBJobDB_test connected
+2020-08-05 11:23:49,648 Database PBJobDB_test removed
+2020-08-05 11:31:27,602 Database : PBJobDB_test connected
+2020-08-05 11:31:28,402 Database PBJobDB_test removed
+2020-08-05 11:31:39,605 ('42000', '[42000] [Microsoft][SQL Server Native Client 11.0][SQL Server]Unable to open the physical file "\\\\ustxca00064sto.ad001.siemens.net\\grp$\\FSA01313088\\Jobs\\Automation\\Test\\MDT\\JobDB.mdf". Operating system error 5: "5(Access is denied.)". (5120) (SQLExecDirectW); [42000] [Microsoft][SQL Server Native Client 11.0][SQL Server]CREATE DATABASE failed. Some file names listed could not be created. Check related errors. (1802)')
+2020-08-05 11:31:39,883 Database : PBJobDB_test connected
+2020-08-05 11:31:40,293 Database PBJobDB_test removed
+2020-08-05 11:31:40,548 Database : PBJobDB_test connected
+2020-08-05 11:32:17,399 Database PBJobDB_test removed
+2020-08-05 11:32:29,945 ('42000', '[42000] [Microsoft][SQL Server Native Client 11.0][SQL Server]Unable to open the physical file "\\\\ustxca00064sto.ad001.siemens.net\\grp$\\FSA01313088\\Jobs\\Automation\\Test\\MDT\\JobDB.mdf". Operating system error 5: "5(Access is denied.)". (5120) (SQLExecDirectW); [42000] [Microsoft][SQL Server Native Client 11.0][SQL Server]CREATE DATABASE failed. Some file names listed could not be created. Check related errors. (1802)')
+2020-08-05 12:21:34,839 Database : PBJobDB_test connected
+2020-08-05 12:21:35,322 Database PBJobDB_test removed
+2020-08-05 12:21:35,578 Database : PBJobDB_test connected
+2020-08-05 12:21:35,987 Database PBJobDB_test removed
+2020-08-05 12:21:36,168 Database : PBJobDB_test connected
+2020-08-05 12:21:58,099 ('42000', '[42000] [Microsoft][SQL Server Native Client 11.0][SQL Server]Unable to open the physical file "D:\\Jobs\\292812_BAU_DCMC_OR_2_3_CHW_Coils\\DesignTool\\MDT\\JobDB.mdf". Operating system error 32: "32(The process cannot access the file because it is being used by another process.)". (5120) (SQLExecDirectW); [42000] [Microsoft][SQL Server Native Client 11.0][SQL Server]CREATE DATABASE failed. Some file names listed could not be created. Check related errors. (1802)')
+2020-08-05 12:25:07,009 Database PBJobDB_test removed
+2020-08-05 12:25:30,842 ('42000', '[42000] [Microsoft][SQL Server Native Client 11.0][SQL Server]The path specified by "\\\\ustxca00064sto.ad001.siemens.net\\grp$\\FSA01313088\\Jobs\\Automation\\Test\\MDT\\JobDB.mdf" is not in a valid directory. (5121) (SQLExecDirectW)')
+2020-08-05 12:25:36,001 Database : PBJobDB_test connected
+2020-08-05 12:29:17,308 Database PBJobDB_test removed
+2020-08-05 12:29:17,579 Database PBJobDB_test removed
+2020-08-05 12:29:17,774 Database : PBJobDB_test connected
+2020-08-05 12:29:18,205 Database PBJobDB_test removed
+2020-08-05 12:29:18,392 Database : PBJobDB_test connected
+2020-08-05 12:29:18,836 Database PBJobDB_test removed
+2020-08-05 12:29:19,076 Database : PBJobDB_test connected
+2020-08-05 12:29:32,224 ('42000', '[42000] [Microsoft][SQL Server Native Client 11.0][SQL Server]Unable to open the physical file "D:\\Jobs\\292812_BAU_DCMC_OR_2_3_CHW_Coils\\DesignTool\\MDT\\JobDB.mdf". Operating system error 32: "32(The process cannot access the file because it is being used by another process.)". (5120) (SQLExecDirectW); [42000] [Microsoft][SQL Server Native Client 11.0][SQL Server]CREATE DATABASE failed. Some file names listed could not be created. Check related errors. (1802)')
+2020-08-05 12:32:17,012 ('42000', '[42000] [Microsoft][SQL Server Native Client 11.0][SQL Server]Unable to open the physical file "D:\\Jobs\\292812_BAU_DCMC_OR_2_3_CHW_Coils\\DesignTool\\MDT\\JobDB.mdf". Operating system error 32: "32(The process cannot access the file because it is being used by another process.)". (5120) (SQLExecDirectW); [42000] [Microsoft][SQL Server Native Client 11.0][SQL Server]CREATE DATABASE failed. Some file names listed could not be created. Check related errors. (1802)')
+2020-08-05 12:33:49,274 ('42000', '[42000] [Microsoft][SQL Server Native Client 11.0][SQL Server]Unable to open the physical file "D:\\Jobs\\292812_BAU_DCMC_OR_2_3_CHW_Coils\\DesignTool\\MDT\\JobDB.mdf". Operating system error 32: "32(The process cannot access the file because it is being used by another process.)". (5120) (SQLExecDirectW); [42000] [Microsoft][SQL Server Native Client 11.0][SQL Server]CREATE DATABASE failed. Some file names listed could not be created. Check related errors. (1802)')
+2020-08-05 12:55:59,596 'ReportDialog' object has no attribute '_get_database_BOM_systems'
+2020-08-05 13:01:27,414 No database connection initialized. Try self.init_database_connection
+2020-08-05 13:06:04,359 'ReportDialog' object has no attribute '_get_database_BOM_systems'
+2020-08-05 13:09:28,957 'ReportDialog' object has no attribute 'BomGenerator'

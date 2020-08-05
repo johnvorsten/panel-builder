@@ -288,15 +288,12 @@ class SQLBase:
             file_used_bool is true
         """
 
-        path_mdf = Path(path_mdf)
-
         sql = """select [name] as logical_name, physical_name,
         	(select name
         	from [master].[sys].[databases] as t2
         	where t2.database_id = t1.database_id) as database_name
         from sys.master_files as t1"""
-        with pyodbc.connect(self.master_connection_str) as master_connection:
-            master_cursor = master_connection.cursor()
+        with self.master_connection.cursor() as master_cursor:
             master_cursor.execute(sql)
             rows = master_cursor.fetchall()
 
@@ -308,14 +305,32 @@ class SQLBase:
         """If the query indicates the .mdf file name OR database name is already
         Used then change the boolean state"""
         for row in rows:
-            if row.physical_name == path_mdf:
+            if self.path_equal(row.physical_name, path_mdf):
                 file_used_bool = True
                 existing_database_name = row.database_name
             if row.database_name == database_name:
                 name_used_bool = True
+                existing_database_name = row.database_name
 
         return (file_used_bool, name_used_bool, existing_database_name)
 
+    @staticmethod
+    def path_equal(path1, path2):
+        """Test path equality cross operating system. This is required instead
+        of os.path.samefile because SQL .mdf files (especially the master)
+        cannot be operated on and file properties examined
+        inputs
+        -------
+        path1 : (str) path like file name
+        path2 : (str) path like file name
+        returns
+        -------
+        (bool) True if paths are the same"""
+
+        path1 = os.path.normpath(os.path.normcase(path1))
+        path2 = os.path.normpath(os.path.normcase(path2))
+
+        return path1 == path2
 
     def pandas_execute_sql(self, sql_query):
         """Read a table to dataframe using pyodbc and pandas. The server and driver
@@ -327,7 +342,7 @@ class SQLBase:
         -------
         df : (pandas.DataFrame) SQL table"""
 
-        if not self.database_connection in self.__dict__:
+        if not 'database_connection' in self.__dict__:
             msg='No database connection initialized. Try self.init_database_connection'
             raise NameError(msg)
 

@@ -6,18 +6,16 @@ Created on Tue Feb 26 14:30:02 2019
 """
 
 # Python imports
-import subprocess
+import subprocess, os
 from collections import namedtuple
 import win32com.client as win32
 from datetime import datetime
 
 # Third party imports
 import pandas as pd
-import os
 import xlsxwriter
 
 # local imports
-from sql_tools import SQLBase
 from BOM_formatting import BOMFormat
 
 # Instantiate classes
@@ -36,9 +34,8 @@ class BOMGenerator():
                  path_mdf,
                  path_ldf,
                  path_j_vars,
-                 server_name='.\DT_SQLEXPR2008',
-                 driver_name='SQL Server Native Client 10.0',
-                 database_name='PBJobDB'):
+                 database_name,
+                 SQLBase):
         """
         Parameters
         ----------
@@ -51,10 +48,51 @@ class BOMGenerator():
         """
 
         #Begin SQL connection to import data
-        self.SQLBase = SQLBase(server_name=server_name,
-                                      driver_name=driver_name)
+        self.SQLBase = SQLBase
 
-        """If a database is already attached then file_used_bool will be True
+        # """If a database is already attached then file_used_bool will be True
+        # If name_used_bool is True then the logical database name is in use
+        # existing_database_name is a string if file_used_bool is True"""
+        # (file_used_bool,
+        #  name_used_bool,
+        #  existing_database_name) = self.SQLBase\
+        #     .check_existing_database(path_mdf, database_name)
+
+        # if file_used_bool:
+        #     # The SQL Database file is in use by other program
+        #     # Dont try and attach the database
+        #     self.database_name = existing_database_name
+
+        # elif name_used_bool and not file_used_bool:
+        #     # The current database name is in use, and the current .mdf file
+        #     # Cannot be attached under that name
+        #     # Try to attach the database with a new name
+        #     now = datetime.now()
+        #     database_name = database_name + now.strftime('%m%d%H%M%S')
+        #     self.database_name = database_name
+        #     self.SQLBase.attach_database(path_mdf,
+        #                                  database_name=database_name,
+        #                                  path_ldf=path_ldf)
+        # else:
+        #     # The name and database file are not in use - Try to attach
+        #     self.database_name = database_name
+        #     self.SQLBase.attach_database(path_mdf,
+        #                                  path_ldf=path_ldf,
+        #                                  database_name=database_name)
+
+        """Make sure the SQLBase class passed already has an active
+        Database connection
+        The Qt Application should instantiate and handle SQL database connections
+        It is not the responsibility of this class to handle database
+        connections"""
+        if 'database_connection' not in self.SQLBase.__dict__:
+            msg=('database connection is not instantiated. There may be an' +
+                 ' issue with Qt Instantiating a connection')
+            raise NameError(msg)
+
+        """The database and name should already be connected
+        Verify this through SQLBase
+        If a database is already attached then file_used_bool will be True
         If name_used_bool is True then the logical database name is in use
         existing_database_name is a string if file_used_bool is True"""
         (file_used_bool,
@@ -62,23 +100,15 @@ class BOMGenerator():
          existing_database_name) = self.SQLBase\
             .check_existing_database(path_mdf, database_name)
 
-        if file_used_bool:
-            # Dont try and attach the database
-            self.database_name = existing_database_name
-
-        elif name_used_bool:
-            # Try to attach the database
-            now = datetime.now()
-            database_name = database_name + now.strftime('%m%d%H%M%S')
-            self.database_name = database_name
-            self.SQLBase.attach_database(path_mdf,
-                                              database_name=database_name,
-                                              path_ldf=path_ldf)
-        else:
-            self.database_name = database_name
-            self.SQLBase.attach_database(path_mdf,
-                                              database_name=database_name,
-                                              path_ldf=path_ldf)
+        msg='The selected MDF File {} is not connected to SQL Server'
+        assert(file_used_bool == True), msg.format(path_mdf)
+        msg=('The selected database name {} does not currently exist in SQL' +
+             ' Server')
+        assert(name_used_bool == True), msg.format(database_name)
+        msg=('The passed database_name and database name connected to SQL' +
+            ' Server do not match. Got {}, expected {}')
+        msg = msg.format(database_name, existing_database_name)
+        assert(existing_database_name == database_name), msg
 
         # Instantiate a BOMFormat class
         self.BOMFormat = BOMFormat(path_j_vars)
@@ -87,24 +117,9 @@ class BOMGenerator():
 
     def get_DEVICES_dataframe(self):
         """Retrieve the DEVICE table from database_name"""
-        device_df = self.SQLBase.read_table(self.database_name,
-                                                   'DEVICES')
+        sql = """SELECT * FROM [DEVICES]"""
+        device_df = self.SQLBase.pandas_execute_sql(sql)
         return device_df
-
-
-    def get_unique_systems(self):
-        """Return a list of unique systems from the database initially
-        connected by the instance"""
-
-        database_name = self.database_name
-        sql = """
-        SELECT [SYSTEM]
-        FROM [{db_name}].[dbo].[DEVICES]
-        GROUP BY [SYSTEM]""".format(db_name=database_name)
-
-        df = self.SQLBase.pandas_read_sql(sql, database_name)
-
-        return df['SYSTEM'].to_list()
 
 
     def report_basic(self, partsDataFrame, systemName):
@@ -143,30 +158,30 @@ class BOMGenerator():
         return
 
 
-    def get_product_database_name(self):
-        """Return the database name (not logical or physical) of the associated
-        products database. The product database has the logical_name 'ProductDB'
-        in SQL server express"""
+    # def get_product_database_name(self):
+    #     """Return the database name (not logical or physical) of the associated
+    #     products database. The product database has the logical_name 'ProductDB'
+    #     in SQL server express"""
 
 
-        sql = """select t1.[name] as logical_name, t1.physical_name,
-                    (select name
-                    from [master].[sys].[databases] as t2
-                    where t2.database_id = t1.database_id) as [database_name]
-                FROM [sys].[master_files] as t1
-                where [name] = 'ProductDB'"""
+    #     sql = """select t1.[name] as logical_name, t1.physical_name,
+    #                 (select name
+    #                 from [master].[sys].[databases] as t2
+    #                 where t2.database_id = t1.database_id) as [database_name]
+    #             FROM [sys].[master_files] as t1
+    #             where [name] = 'ProductDB'"""
 
 
-        df = self.SQLBase.pandas_read_sql(sql, 'master')
-        if df.shape[0] == 0:
-            return None
-        else:
-            product_database_name = df.loc[0, 'database_name']
+    #     df = self.SQLBase.pandas_execute_sql(sql, 'master')
+    #     if df.shape[0] == 0:
+    #         return None
+    #     else:
+    #         product_database_name = df.loc[0, 'database_name']
 
-        return product_database_name
+    #     return product_database_name
 
 
-    def get_parts_dataframe(self, database_name, system):
+    def get_parts_dataframe(self, database_name, system, product_db):
         """Run a sql query to retrieve a dataframe of unique parts in 'system'
         aggregated on 'PARTNO' in 'DEVICES' and 'QUANTITY' of parts are summed
         The resulting dataframe has columns
@@ -190,7 +205,6 @@ class BOMGenerator():
 
 
         table_name = 'DEVICES'
-        prodcut_db = self.get_product_database_name()
 
         sql_aggregate = """
         select t1.PARTNO, sum(t1.QUANTITY) AS QUANTITY, t1.RETRO,
@@ -214,9 +228,9 @@ class BOMGenerator():
         GROUP BY t1.PARTNO, t1.RETRO""".format(db_name=database_name,
                                     table_name=table_name,
                                     system=system,
-                                    product_db=prodcut_db)
+                                    product_db=product_db)
 
-        df = self.SQLBase.pandas_read_sql(sql_aggregate, database_name)
+        df = self.SQLBase.pandas_execute_sql(sql_aggregate, database_name)
 
         # Clean nan values
         for row in df.itertuples(index=True):
@@ -277,7 +291,7 @@ class BOMGenerator():
         return None
 
 
-    def generate_report_standard(self, retro_flags, unique_systems):
+    def generate_report_standard(self, retro_flags, unique_systems, product_db):
         """
         inputs
         -------
@@ -288,13 +302,6 @@ class BOMGenerator():
 
         # Instantiate a connection and attach the table
         database_name = self.database_name
-
-        # Clean user input for system_names
-        database_systems = self.get_unique_systems()
-        msg = ('The system {} does not exist in the specified database. Please' +
-               'revise the list of unique_systems that are being requested')
-        for system_name in unique_systems:
-            assert system_name in database_systems, msg.format(system_name)
 
         # Initial Values
         head_start = 0 # Where to start printing main document header
@@ -326,7 +333,8 @@ class BOMGenerator():
 
             # Get part data
             parts_df = self.get_parts_dataframe(database_name,
-                                                system=system_name)
+                                                system=system_name,
+                                                product_db=product_db)
 
             if 'IS NULL' not in retro_flags:
                 index = parts_df[[part is None for part in parts_df['RETRO']]].index
@@ -400,7 +408,7 @@ class BOMGenerator():
 
         return
 
-    def generate_report_larson(self, retro_flags, unique_systems):
+    def generate_report_larson(self, retro_flags, unique_systems, product_db):
         """
         inputs
         -------
@@ -411,13 +419,6 @@ class BOMGenerator():
 
         # Instantiate a connection and attach the table
         database_name = self.database_name
-
-        # Clean user input for system_names
-        database_systems = self.get_unique_systems()
-        msg = ('The system {} does not exist in the specified database. Please' +
-               'revise the list of unique_systems that are being requested')
-        for system_name in unique_systems:
-            assert system_name in database_systems, msg.format(system_name)
 
         # Initial Values
         head_start = 0 # Where to start printing main head
@@ -451,7 +452,8 @@ class BOMGenerator():
 
             # Get part data
             parts_df = self.get_parts_dataframe(database_name,
-                                                system=system_name)
+                                                system=system_name,
+                                                product_db=product_db)
 
             if 'IS NULL' not in retro_flags:
                 index = parts_df[[part is None for part in parts_df['RETRO']]].index
@@ -543,13 +545,6 @@ class BOMGenerator():
 
         # Instantiate a connection and attach the table
         database_name = self.database_name
-
-        # Clean user input for system_names
-        database_systems = self.get_unique_systems()
-        msg = ('The system {} does not exist in the specified database. Please' +
-               'revise the list of unique_systems that are being requested')
-        for system_name in unique_systems:
-            assert system_name in database_systems, msg.format(system_name)
 
         # Create workbook and worksheet
         report_path = os.path.join(os.getcwd(), 'reports', 'BOM_Report.xlsx')
