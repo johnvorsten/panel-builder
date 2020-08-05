@@ -341,3 +341,6 @@ Existing Database : PBJobDB
 2020-08-05 13:01:27,414 No database connection initialized. Try self.init_database_connection
 2020-08-05 13:06:04,359 'ReportDialog' object has no attribute '_get_database_BOM_systems'
 2020-08-05 13:09:28,957 'ReportDialog' object has no attribute 'BomGenerator'
+2020-08-05 15:35:31,202 'ReportDialog' object has no attribute 'BomGenerator'
+2020-08-05 15:37:58,216 'BOMGenerator' object has no attribute 'database_name'
+2020-08-05 15:41:10,901 pandas_execute_sql() takes 2 positional arguments but 3 were given

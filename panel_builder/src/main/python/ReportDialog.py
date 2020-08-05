@@ -158,22 +158,6 @@ class ReportDialogActions:
         return report_style
 
 
-    def _init_BOM_generator(self):
-        """Instantiate a BOM generator class for generating reports and filling
-        the UI"""
-        path_mdf = self.context.path_mdf
-        path_ldf = self.context.path_ldf
-        path_j_vars = self.context.path_j_vars
-        database_name = self.context.database_name
-
-        self.BomGenerator = BOMGenerator(path_mdf=path_mdf,
-                                         path_ldf=path_ldf,
-                                         path_j_vars=path_j_vars,
-                                         database_name=database_name,
-                                         SQLBase=self.context.SQLBase,)
-        return None
-
-
     def get_unique_systems(self, database_name):
         """Return a list of unique systems from the database initially
         connected by the instance"""
@@ -219,6 +203,12 @@ class ReportDialogActions:
             report_style = self._get_report_style()
             product_db = self.get_product_database_name()
 
+            BomGenerator = BOMGenerator(self.context.path_mdf,
+                                        self.context.path_ldf,
+                                        self.context.path_j_vars,
+                                        self.context.database_name,
+                                        self.context.SQLBase)
+
             msg = ('Your report is being generated and should auto-open when' +
                    ' finished. This may take longer on larger jobs. Select "Ok"' +
                    ' to continue or cancel to change selection')
@@ -232,11 +222,11 @@ class ReportDialogActions:
 
             if choice == QMessageBox.Ok:
                 if report_style == 'OG Larson':
-                    self.BomGenerator.generate_report_larson(retro_flags,
+                    BomGenerator.generate_report_larson(retro_flags,
                                                              selected_systems,
                                                              product_db)
                 elif report_style == 'Standard':
-                    self.BomGenerator.generate_report_standard(retro_flags,
+                    BomGenerator.generate_report_standard(retro_flags,
                                                                selected_systems,
                                                                product_db)
                 else:
