@@ -16,7 +16,7 @@ import pandas as pd
 import xlsxwriter
 
 # local imports
-
+from read_j_vars import read_vars_to_dict
 
 # Instantiate classes
 cell = namedtuple('cell',['row','col','data', 'format'])
@@ -130,29 +130,6 @@ class BOMGenerator():
         excel.Application.Quit()
 
         return
-
-
-    # def get_product_database_name(self):
-    #     """Return the database name (not logical or physical) of the associated
-    #     products database. The product database has the logical_name 'ProductDB'
-    #     in SQL server express"""
-
-
-    #     sql = """select t1.[name] as logical_name, t1.physical_name,
-    #                 (select name
-    #                 from [master].[sys].[databases] as t2
-    #                 where t2.database_id = t1.database_id) as [database_name]
-    #             FROM [sys].[master_files] as t1
-    #             where [name] = 'ProductDB'"""
-
-
-    #     df = self.SQLBase.pandas_execute_sql(sql, 'master')
-    #     if df.shape[0] == 0:
-    #         return None
-    #     else:
-    #         product_database_name = df.loc[0, 'database_name']
-
-    #     return product_database_name
 
 
     def get_parts_dataframe(self, database_name, system, product_db):
@@ -636,7 +613,7 @@ class BOMGenerator():
 
 
 
-class BOMFormat():
+class BOMFormat:
 
     def __init__(self, initialization_file_path):
         """

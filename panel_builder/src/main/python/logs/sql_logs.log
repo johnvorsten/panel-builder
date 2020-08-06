@@ -344,3 +344,4 @@ Existing Database : PBJobDB
 2020-08-05 15:35:31,202 'ReportDialog' object has no attribute 'BomGenerator'
 2020-08-05 15:37:58,216 'BOMGenerator' object has no attribute 'database_name'
 2020-08-05 15:41:10,901 pandas_execute_sql() takes 2 positional arguments but 3 were given
+2020-08-05 16:55:09,943 Database : PBJobDB_test connected
