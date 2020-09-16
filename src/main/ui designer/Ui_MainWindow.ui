@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>381</width>
+    <height>325</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget"/>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>381</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuPanelBuilder">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="actionFind_Job"/>
+    <addaction name="actionOptions"/>
+    <addaction name="actionUpdate_Product_DB"/>
+   </widget>
+   <widget class="QMenu" name="menuReports">
+    <property name="title">
+     <string>Reports</string>
+    </property>
+    <addaction name="actionOpen_Reports"/>
+   </widget>
+   <widget class="QMenu" name="menuView">
+    <property name="title">
+     <string>View</string>
+    </property>
+    <addaction name="actionBOM"/>
+   </widget>
+   <addaction name="menuPanelBuilder"/>
+   <addaction name="menuReports"/>
+   <addaction name="menuView"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionFind_Job">
+   <property name="text">
+    <string>Find Job</string>
+   </property>
+  </action>
+  <action name="actionOptions">
+   <property name="text">
+    <string>Options</string>
+   </property>
+  </action>
+  <action name="actionBOM">
+   <property name="text">
+    <string>Device Table</string>
+   </property>
+  </action>
+  <action name="actionUpdate_Product_DB">
+   <property name="text">
+    <string>Update Product DB</string>
+   </property>
+   <property name="iconText">
+    <string extracomment="Update Product Database from SOP">Update Product DB</string>
+   </property>
+   <property name="toolTip">
+    <string extracomment="Update Product Database from SOP">Update Product DB</string>
+   </property>
+   <property name="statusTip">
+    <string extracomment="Update Product Database from SOP"/>
+   </property>
+   <property name="whatsThis">
+    <string extracomment="Update Product Database from SOP"/>
+   </property>
+   <property name="shortcut">
+    <string extracomment="Update Product Database from SOP"/>
+   </property>
+  </action>
+  <action name="actionOpen_Reports">
+   <property name="text">
+    <string>Open Reports</string>
+   </property>
+  </action>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

@@ -15,6 +15,8 @@
 **/SQLTest
 **/target
 **/pytz
+**/logs
+**/data
 
 # Files
 testing.py

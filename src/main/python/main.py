@@ -23,6 +23,7 @@ from ReportDialog import ReportDialog
 from MainWindowDialog import MainWindowDialog
 from OptionsDialog import OptionsDialog
 from DeviceTableDialog import DeviceTableDialog
+from ProductUpdateDialog import ProductUpdateDialog
 from sql_tools import SQLBase
 
 # Instances
@@ -33,8 +34,8 @@ logging.basicConfig(filename=os.path.join(os.getcwd(), 'logs', 'sql_logs.log'),
 #%%
 
 
-"""# Multiple inheiritance method where we sub-class QDialog and set user interface
-# Using __init__() method
+"""# Multiple inheiritance method where we sub-class QDialog and set
+user interface using __init__() method
 It is important to understand how I am subcassing these items.
 First, I create a .py file that contains user interface objects with qt designer
 and the pyuic tool
@@ -51,7 +52,6 @@ Once the files are created I can use them by subclassing two items :
 3) Finally, I can add functionality to each dialog or window because I already
     subclassed the Ui_ files and python classes.  I have to access objects by name
     or by class attribute
-4)
 """
 
 
@@ -97,13 +97,18 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             .connect(lambda : self.action_show_options(OptionsDialog))
 
         # Show Reports QAction
-        self.actionReports.setStatusTip('Show Reports')
-        self.actionReports.triggered\
+        self.actionOpen_Reports.setStatusTip('Show Reports')
+        self.actionOpen_Reports.triggered\
             .connect(lambda state : self.action_show_reports(ReportDialog))
 
         self.actionBOM.setStatusTip('Show Device Table')
         self.actionBOM.triggered\
             .connect(lambda state : self.action_show_SQL_BOM(DeviceTableDialog))
+
+        # Show update Product DB Dialog
+        self.actionUpdate_Product_DB.setStatusTip('Update product DB from EXCEL SOP')
+        self.actionUpdate_Product_DB.triggered\
+            .connect(lambda state : self.action_show_update_products(ProductUpdateDialog))
 
         return None
 
@@ -384,6 +389,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         return None
 
+    def action_show_update_products(self, ProductUpdateDialog):
+        """Show the dialog to update product database from an SOP Excel file"""
+        ProductUpdateDialog = ProductUpdateDialog(self.context)
+        ProductUpdateDialog.exec()
+        return None
+
 
 
 #%%
@@ -429,10 +440,6 @@ class AppContext(ApplicationContext):
          name_used_bool,
          existing_database_name) = self.SQLBase\
             .check_existing_database(path_mdf, database_name)
-        print(path_mdf, path_ldf, database_name)
-        print('File Used : {}'.format(file_used_bool))
-        print('Name Used : {}'.format(name_used_bool))
-        print('Existing Name : {}'.format(existing_database_name))
 
         if file_used_bool:
             # The SQL Database file is in use by other program

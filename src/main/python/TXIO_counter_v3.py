@@ -11,11 +11,11 @@ from datetime import date
 import os
 
 class Counter():
-    """Counter class is used to count number of TXIO modules required for a 
+    """Counter class is used to count number of TXIO modules required for a
     PXC Modular. See methods for more explanation"""
     #TODO Make percent added dyamic w/ user input
-    
-    def __init__(self, pathMDF): 
+
+    def __init__(self, pathMDF):
         """Connect to SQL master database
         Attach user-specified Job Database
         Connect to SQL specified Job Database
@@ -36,9 +36,9 @@ class Counter():
         self.NETDEV = pd.read_sql_table('NETDEV', self.engine)
         self.pointDict = {'totalLDO':0, 'totalL2SL':0, 'DO_SUM':0, 'extraDO':0,'TXM1_6RM':0, 'emptyDO':0,
                        'totalLDI':0,'totalLPACI':0,'DI_SUM':0,'extraDI':0,'TXM1_16D':0, 'emptyDI':0,
-                       'AO_SUM':0, 'totalCurrent_AO':0, 'extraCurrent_AO':0, 'totalStandard_AO':0, 
-                       'extraStandard_AO':0, 'AI_SUM':0, 'totalCurrent_AI':0, 'extraCurrent_AI':0, 
-                       'totalStandard_AI':0, 'extraStandard_AI':0, 'TXM1_8XML':0, 'TXM1_8UML':0, 
+                       'AO_SUM':0, 'totalCurrent_AO':0, 'extraCurrent_AO':0, 'totalStandard_AO':0,
+                       'extraStandard_AO':0, 'AI_SUM':0, 'totalCurrent_AI':0, 'extraCurrent_AI':0,
+                       'totalStandard_AI':0, 'extraStandard_AI':0, 'TXM1_8XML':0, 'TXM1_8UML':0,
                        'TXM1_8X':0, 'TXM1_8U':0, 'emptyXML':0, 'emptyUML':0, 'emptyX':0, 'emptyU':0}
         self.uniquePanels = self.unique_panels()
 
@@ -47,7 +47,7 @@ class Counter():
         uniquePanels = set(self.POINTBAS['NETDEVID'])
         uniquePanels = list(uniquePanels) #return as list for access
         return uniquePanels
-        
+
     def count_LDO(self, panelName):
         """Count all LDO points on a specific panel.
         Parameters
@@ -66,7 +66,7 @@ class Counter():
         for key in mydict:
             self.pointDict[key] = mydict[key]
         return mydict
-        
+
     def count_LDI(self, panelName):
         """Count all LDI points on a specific panel.
         Parameters
@@ -86,7 +86,7 @@ class Counter():
         for key in mydict:
             self.pointDict[key] = mydict[key]
         return mydict
-    
+
     def count_LAnalog(self, panelName, configuration):
         """Count all Logical Analog points on a specific panel.  Makes differentiation between
         SUPER and STANDARD universal points
@@ -101,17 +101,17 @@ class Counter():
         2 -> TXM18X_8U() - 8x and 8u
         3 -> TXM18XML_8UML() - 8xml and 8uml on all
         4 -> TXM18XML_8UML_8X_8U() - 8xml AO, 8x AI, 8uml AO, 8U AI
-        
+
         Outputs
         ---------
-        dictionary of keys : {AO_SUM, totalCurrent_AO, extraCurrent_AO, totalStandard_AO, 
-        extraStandard_AO, totalCurrent_AI, extraCurrent_AI, 
-        totalStandard_AI, extraStandard_AI, TXM1_8XML, TXM1_8UML, 
+        dictionary of keys : {AO_SUM, totalCurrent_AO, extraCurrent_AO, totalStandard_AO,
+        extraStandard_AO, totalCurrent_AI, extraCurrent_AI,
+        totalStandard_AI, extraStandard_AI, TXM1_8XML, TXM1_8UML,
         TXM1_8X, TXM1_8U, emptyXML, emptyUML, emptyX, emptyU}"""
-        
+
         AO_SUM = sum((self.POINTBAS.loc[:,'TYPE'] == 'LAO') & (self.POINTBAS.loc[:,'NETDEVID'] == panelName))
         AI_SUM = sum((self.POINTBAS.loc[:,'TYPE'] == 'LAI') & (self.POINTBAS['NETDEVID']==panelName))
-        
+
         dataframe_AO = pd.DataFrame(np.zeros((self.POINTSEN.shape[0],3)))
         for i in range(0,self.POINTSEN.shape[0]): #Match POINTID with NETDEVID to select panel only
             dataframe_AO.loc[i,0] = self.POINTSEN.loc[i,'POINTID']
@@ -122,18 +122,18 @@ class Counter():
         totalStandard_AO = sum((self.POINTSEN['SENSORTYPE'] != 'CURRENT') & (dataframe_AO[2] == panelName) & (dataframe_AO[1] == 'LAO'))
         extraCurrent_AO = math.ceil(totalCurrent_AO*1.05)
         extraStandard_AO = math.ceil(totalStandard_AO*1.05)
-        
+
         dataframe_AI = pd.DataFrame(np.zeros((self.POINTSEN.shape[0],3)))
         for i in range(0,self.POINTSEN.shape[0]):
             dataframe_AI.loc[i,0] = self.POINTSEN.loc[i,'POINTID']
             index = np.where(self.POINTBAS['POINTID']==self.POINTSEN.loc[i,'POINTID'])[0][0]
             dataframe_AI.loc[i,1] = self.POINTBAS.loc[index, 'TYPE']
-            dataframe_AI.loc[i,2] = self.POINTBAS.loc[index, 'NETDEVID']  
+            dataframe_AI.loc[i,2] = self.POINTBAS.loc[index, 'NETDEVID']
         totalCurrent_AI = sum((self.POINTSEN['SENSORTYPE'] == 'CURRENT') & (dataframe_AI[2] == panelName) & (dataframe_AI[1] == 'LAI'))
         totalStandard_AI = sum((self.POINTSEN['SENSORTYPE'] != 'CURRENT') & (dataframe_AI[2] == panelName) & (dataframe_AI[1] == 'LAI'))
         extraCurrent_AI = math.ceil(totalCurrent_AI*1.05)
         extraStandard_AI = math.ceil(totalStandard_AI*1.05)
-        
+
         def TXM18XML():
             """8X-ML for all analog ponits"""
             TXM1_8XML = math.ceil((extraCurrent_AO + extraStandard_AO + extraCurrent_AI + extraStandard_AI)/8)
@@ -144,14 +144,14 @@ class Counter():
             emptyUML = 0
             emptyX = 0
             emptyU = 0
-            mydict = {'AO_SUM':AO_SUM, 'totalCurrent_AO':totalCurrent_AO, 'extraCurrent_AO':extraCurrent_AO, 'totalStandard_AO':totalStandard_AO, 
-                   'extraStandard_AO':extraStandard_AO, 'AI_SUM':AI_SUM,'totalCurrent_AI':totalCurrent_AI, 'extraCurrent_AI':extraCurrent_AI, 
-                    'totalStandard_AI':totalStandard_AI, 'extraStandard_AI':extraStandard_AI, 'TXM1_8XML':TXM1_8XML, 'TXM1_8UML':TXM1_8UML, 
+            mydict = {'AO_SUM':AO_SUM, 'totalCurrent_AO':totalCurrent_AO, 'extraCurrent_AO':extraCurrent_AO, 'totalStandard_AO':totalStandard_AO,
+                   'extraStandard_AO':extraStandard_AO, 'AI_SUM':AI_SUM,'totalCurrent_AI':totalCurrent_AI, 'extraCurrent_AI':extraCurrent_AI,
+                    'totalStandard_AI':totalStandard_AI, 'extraStandard_AI':extraStandard_AI, 'TXM1_8XML':TXM1_8XML, 'TXM1_8UML':TXM1_8UML,
                     'TXM1_8X':TXM1_8X, 'TXM1_8U':TXM1_8U, 'emptyXML':emptyXML, 'emptyUML':emptyUML, 'emptyX':emptyX, 'emptyU':emptyU}
             for key in mydict:
                 self.pointDict[key] = mydict[key]
             return mydict
-        
+
         def TXM18X():
             """8X for all analog points"""
             TXM1_8XML = 0
@@ -162,14 +162,14 @@ class Counter():
             emptyUML = 0
             emptyX = TXM1_8X*8 - (totalCurrent_AO + totalStandard_AO + totalCurrent_AI + totalStandard_AI)
             emptyU = 0
-            mydict = {'AO_SUM':AO_SUM, 'totalCurrent_AO':totalCurrent_AO, 'extraCurrent_AO':extraCurrent_AO, 'totalStandard_AO':totalStandard_AO, 
-                   'extraStandard_AO':extraStandard_AO, 'AI_SUM':AI_SUM,'totalCurrent_AI':totalCurrent_AI, 'extraCurrent_AI':extraCurrent_AI, 
-                    'totalStandard_AI':totalStandard_AI, 'extraStandard_AI':extraStandard_AI, 'TXM1_8XML':TXM1_8XML, 'TXM1_8UML':TXM1_8UML, 
+            mydict = {'AO_SUM':AO_SUM, 'totalCurrent_AO':totalCurrent_AO, 'extraCurrent_AO':extraCurrent_AO, 'totalStandard_AO':totalStandard_AO,
+                   'extraStandard_AO':extraStandard_AO, 'AI_SUM':AI_SUM,'totalCurrent_AI':totalCurrent_AI, 'extraCurrent_AI':extraCurrent_AI,
+                    'totalStandard_AI':totalStandard_AI, 'extraStandard_AI':extraStandard_AI, 'TXM1_8XML':TXM1_8XML, 'TXM1_8UML':TXM1_8UML,
                     'TXM1_8X':TXM1_8X, 'TXM1_8U':TXM1_8U, 'emptyXML':emptyXML, 'emptyUML':emptyUML, 'emptyX':emptyX, 'emptyU':emptyU}
             for key in mydict:
                 self.pointDict[key] = mydict[key]
             return mydict
-            
+
         def TXM18X_8U():
             """8U and 8X for all analog points"""
             TXM1_8XML = 0
@@ -188,14 +188,14 @@ class Counter():
                     print('Error')
             else:
                 emptyX = (TXM1_8X*8 - totalCurrent_AO - totalCurrent_AI)
-            mydict = {'AO_SUM':AO_SUM, 'totalCurrent_AO':totalCurrent_AO, 'extraCurrent_AO':extraCurrent_AO, 'totalStandard_AO':totalStandard_AO, 
-                   'extraStandard_AO':extraStandard_AO, 'AI_SUM':AI_SUM,'totalCurrent_AI':totalCurrent_AI, 'extraCurrent_AI':extraCurrent_AI, 
-                    'totalStandard_AI':totalStandard_AI, 'extraStandard_AI':extraStandard_AI, 'TXM1_8XML':TXM1_8XML, 'TXM1_8UML':TXM1_8UML, 
+            mydict = {'AO_SUM':AO_SUM, 'totalCurrent_AO':totalCurrent_AO, 'extraCurrent_AO':extraCurrent_AO, 'totalStandard_AO':totalStandard_AO,
+                   'extraStandard_AO':extraStandard_AO, 'AI_SUM':AI_SUM,'totalCurrent_AI':totalCurrent_AI, 'extraCurrent_AI':extraCurrent_AI,
+                    'totalStandard_AI':totalStandard_AI, 'extraStandard_AI':extraStandard_AI, 'TXM1_8XML':TXM1_8XML, 'TXM1_8UML':TXM1_8UML,
                     'TXM1_8X':TXM1_8X, 'TXM1_8U':TXM1_8U, 'emptyXML':emptyXML, 'emptyUML':emptyUML, 'emptyX':emptyX, 'emptyU':emptyU}
             for key in mydict:
                 self.pointDict[key] = mydict[key]
             return mydict
-        
+
         def TXM18XML_8UML():
             """8U-ML and 8X-ML for all analog points"""
             TXM1_8XML = math.ceil((extraCurrent_AO + extraCurrent_AI)/8) #Assume AO 4-20mA is possible w/ 4 slots per module
@@ -212,14 +212,14 @@ class Counter():
                     emptyXML = TXM1_8XML*8 - totalCurrent_AO - totalCurrent_AI - (abs(TXM1_8UML*8 - totalStandard_AO - totalStandard_AI))
                 else:
                     print('Error')
-            mydict = {'AO_SUM':AO_SUM, 'totalCurrent_AO':totalCurrent_AO, 'extraCurrent_AO':extraCurrent_AO, 'totalStandard_AO':totalStandard_AO, 
-                   'extraStandard_AO':extraStandard_AO, 'AI_SUM':AI_SUM,'totalCurrent_AI':totalCurrent_AI, 'extraCurrent_AI':extraCurrent_AI, 
-                    'totalStandard_AI':totalStandard_AI, 'extraStandard_AI':extraStandard_AI, 'TXM1_8XML':TXM1_8XML, 'TXM1_8UML':TXM1_8UML, 
+            mydict = {'AO_SUM':AO_SUM, 'totalCurrent_AO':totalCurrent_AO, 'extraCurrent_AO':extraCurrent_AO, 'totalStandard_AO':totalStandard_AO,
+                   'extraStandard_AO':extraStandard_AO, 'AI_SUM':AI_SUM,'totalCurrent_AI':totalCurrent_AI, 'extraCurrent_AI':extraCurrent_AI,
+                    'totalStandard_AI':totalStandard_AI, 'extraStandard_AI':extraStandard_AI, 'TXM1_8XML':TXM1_8XML, 'TXM1_8UML':TXM1_8UML,
                     'TXM1_8X':TXM1_8X, 'TXM1_8U':TXM1_8U, 'emptyXML':emptyXML, 'emptyUML':emptyUML, 'emptyX':emptyX, 'emptyU':emptyU}
             for key in mydict:
                 self.pointDict[key] = mydict[key]
             return mydict
-            
+
         def TXM18XML_8UML_8X_8U():
             """8X-ML and 8U-ML for outputs, 8U and 8X for inputs"""
             #TODO - if there are more empty XML than currentAI, then the emptyXML will be underutilized (unlikely scenario)
@@ -234,7 +234,7 @@ class Counter():
                     emptyXML = TXM1_8XML*8 - totalCurrent_AO - abs(TXM1_8X*8 - totalCurrent_AI)
                 else:
                     print('Error')
-            
+
             #Apply standard outputs to 8UML
             TXM1_8UML = math.ceil((extraStandard_AO)/8)
             emptyUML = TXM1_8UML*8 - totalStandard_AO
@@ -258,14 +258,14 @@ class Counter():
                         emptyU = 0
                 else:
                     print('Error')
-            mydict = {'AO_SUM':AO_SUM, 'totalCurrent_AO':totalCurrent_AO, 'extraCurrent_AO':extraCurrent_AO, 'totalStandard_AO':totalStandard_AO, 
-                   'extraStandard_AO':extraStandard_AO, 'AI_SUM':AI_SUM,'totalCurrent_AI':totalCurrent_AI, 'extraCurrent_AI':extraCurrent_AI, 
-                    'totalStandard_AI':totalStandard_AI, 'extraStandard_AI':extraStandard_AI, 'TXM1_8XML':TXM1_8XML, 'TXM1_8UML':TXM1_8UML, 
+            mydict = {'AO_SUM':AO_SUM, 'totalCurrent_AO':totalCurrent_AO, 'extraCurrent_AO':extraCurrent_AO, 'totalStandard_AO':totalStandard_AO,
+                   'extraStandard_AO':extraStandard_AO, 'AI_SUM':AI_SUM,'totalCurrent_AI':totalCurrent_AI, 'extraCurrent_AI':extraCurrent_AI,
+                    'totalStandard_AI':totalStandard_AI, 'extraStandard_AI':extraStandard_AI, 'TXM1_8XML':TXM1_8XML, 'TXM1_8UML':TXM1_8UML,
                     'TXM1_8X':TXM1_8X, 'TXM1_8U':TXM1_8U, 'emptyXML':emptyXML, 'emptyUML':emptyUML, 'emptyX':emptyX, 'emptyU':emptyU}
             for key in mydict:
                 self.pointDict[key] = mydict[key]
             return mydict
-        
+
         #Map based on function call?
         """configuration map
         0 -> TXM18ML()
@@ -275,10 +275,10 @@ class Counter():
         4 -> TXM18XML_8UML_8X_8U()"""
         flist = [TXM18XML, TXM18X, TXM18X_8U, TXM18XML_8UML, TXM18XML_8UML_8X_8U]
         flist[configuration]()
-        
+
     def count_all_io(self, panelName, configuration):
         """Convenience wrapper. Calls count_LDO, count_LDI, count_LAO, count_LAI
-        and generates a report.  
+        and generates a report.
         Special Note: Must call Count.report() to initialize printing functinoality
         Parameters
         --------------
@@ -288,43 +288,43 @@ class Counter():
         self.count_LDO(panelName)
         self.count_LDI(panelName)
         self.count_LAnalog(panelName, configuration)
-        
+
         print('Number of standard DO = ', self.pointDict['totalLDO'])
         print('Number of L2SL DO points = ', self.pointDict['totalL2SL'])
         print('total number of LDO points : ', self.pointDict['DO_SUM'])
         print('total number of LDO points with 5% added = ', self.pointDict['extraDO'])
         print('total number of TXM1.6R-M required = ', self.pointDict['TXM1_6RM'], '\n')
-        
+
         print('Total LDI : ', self.pointDict['totalLDI'])
         print('Number of L2SL DI points = ', self.pointDict['totalL2SL'])
         print('Number of LPACI DI points = ', self.pointDict['totalLPACI'])
         print('Total LDI w/ 5% added = ', self.pointDict['extraDI'])
         print('total number of TXM1.16D required = ', self.pointDict['TXM1_16D'], '\n')
-        
+
         print('Total LAI : ', self.pointDict['AI_SUM'])
         print('Total Current : ', self.pointDict['totalCurrent_AI'])
         print('Total Standard : ', self.pointDict['totalStandard_AI'])
         print('Total Current w/ 5% : ', self.pointDict['extraCurrent_AI'])
         print('Total Standard w/ 5% : ', self.pointDict['extraStandard_AI'], '\n')
-        
+
         print('Total LAO : ', self.pointDict['AO_SUM'])
         print('Total Current : ', self.pointDict['totalCurrent_AO'])
         print('Total Standard : ', self.pointDict['totalStandard_AO'])
         print('Total Current w/ 5% : ', self.pointDict['extraCurrent_AO'])
         print('Total Standard w/ 5% : ', self.pointDict['extraStandard_AO'],'\n')
-        
+
         print('Number of TXM1.8X-ML w/ 5% : ', self.pointDict['TXM1_8XML'])
         print('Number of TXM1.8U-ML w/ 5% = ', self.pointDict['TXM1_8UML'])
         print('Number of TXM1.8X w/ 5% = ', self.pointDict['TXM1_8X'])
         print('Number of TXM1.8U w/ 5%= ', self.pointDict['TXM1_8U'])
-        
+
         print('Empty DI : ', self.pointDict['emptyDI'])
         print('Empty DO : ', self.pointDict['emptyDI'])
         print('Empty XML : ', self.pointDict['emptyXML'])
         print('Empty X : ', self.pointDict['emptyX'])
         print('Empty UML : ', self.pointDict['emptyUML'])
         print('Empty U : ', self.pointDict['emptyU'])
-        
+
     def report(self, panelName, configuration):
         """Generate EXCEL report for user visualization
         Opens report once generated
@@ -366,17 +366,17 @@ class Counter():
         global df
         df = labels.join(values)
         writer = pd.ExcelWriter('TXIO_Test1.xlsx', engine='xlsxwriter')
-        
+
         df.to_excel(writer, sheet_name=panelName, startrow= 0, startcol= 0, header=False, index=False)
         writer.save()
         path = r'start EXCEL.EXE ' + os.getcwd() + r"\TXIO_Test1.xlsx"
         os.system(path)
-        
+
     def add_TXIO(self, panelName):
         """Automatically add TXIO to panel specified. Call this conditionally,
         and only after the pointDict has been populated"""
 
-        
+
         def descriptor_lookup(txio):
             descriptorDict = {'TXM1.6R-M':'6 DO Relay w/HOA', 'TXM1.16D':'16 DI',
                               'TXM1.8U':'8 Universal','TXM1.8U-ML':'8 Universal w/LOID',
@@ -387,13 +387,13 @@ class Counter():
             except:
                 return False
                 print('Unknown TXIO')
-            return descriptor          
-            
+            return descriptor
+
         def get_parentid(panelName):
             #search NETDEV table for panel name - then get the parentID
             loc = np.where(self.NETDEV['PARENTID']==panelName)
             return self.NETDEV.loc[loc[0][0], 'NETDEVID']
-        
+
         def check_existing_any():
             #see if panel already has ANY TXIO assigned to it
             index = 0
@@ -410,9 +410,9 @@ class Counter():
             for items in txioList:
                 if txioModules.str.contains(items).any():
                     return True
-                else: 
+                else:
                     return False
-        
+
         def check_existing_device(device):
             #Check for existance of SPECIFIC device - any of TXIOList
             #return true if at least one device  exists
@@ -429,11 +429,11 @@ class Counter():
                 return True
             else:
                 return False
-                
+
         def order_txio(_TXIODict):
             #Order to add IO modules
             defaultOrder = ['TXM1.8X-ML','TXM1.8U-ML','TXM1.8U','TXM1.8X','TXM1.6R-M','TXM1.16D']
-            txioOrder = []            
+            txioOrder = []
             for txio in defaultOrder: #order other TXIO
                 number2add = _TXIODict[txio]
                 for i in range(0,number2add):
@@ -447,7 +447,7 @@ class Counter():
             if _TXIODict['TXS1.12F4'] == 1: #Add power supply to slot 1
                 txioOrder.insert(0, 'TXS1.12F4')
             return txioOrder
-        
+
         def get_start_index():
             index = 0
             indexlist = []
@@ -465,8 +465,8 @@ class Counter():
             except ValueError:
                 maxval = 0
             return maxval
-        
-        def get_address1(txioOrder):            
+
+        def get_address1(txioOrder):
             address1 = []
             for partno in txioOrder:
                 if partno == 'TXS1.EF4':
@@ -495,7 +495,7 @@ class Counter():
                         str2add = str2add.__add__(' ')
                     address1.append(str2add + str(maxval))
             return address1
-        
+
         def write_to(_values):
             global values
             values = _values
@@ -505,7 +505,7 @@ class Counter():
              ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
             self.cursor.execute(sql, _values)
             self.cursor.commit()
-        
+
         def get_address3(indexList):
             address3 = []
             for index in indexList:
@@ -528,7 +528,7 @@ class Counter():
                         str2add = str2add.__add__(' ')
                     address3.append(str2add + str(index))
             return address3
-        
+
         def get_address2(indexList):
             address2 = []
             for index in indexList:
@@ -537,24 +537,24 @@ class Counter():
                     str2add = str2add.__add__(' ')
                 address2.append(str2add + '0')
             return address2
-        
+
         self.TXIODict = {'TXM1.6R-M':self.pointDict['TXM1_6RM'], 'TXM1.16D':self.pointDict['TXM1_16D'],
-                       'TXM1.8X-ML':self.pointDict['TXM1_8XML'],'TXM1.8U-ML':self.pointDict['TXM1_8UML'], 
-                       'TXM1.8X':self.pointDict['TXM1_8X'], 'TXM1.8U':self.pointDict['TXM1_8U'], 
+                       'TXM1.8X-ML':self.pointDict['TXM1_8XML'],'TXM1.8U-ML':self.pointDict['TXM1_8UML'],
+                       'TXM1.8X':self.pointDict['TXM1_8X'], 'TXM1.8U':self.pointDict['TXM1_8U'],
                        'TXS1.EF4':0, 'TXS1.12F4':0} #Dict of TXIO
-        
+
         if check_existing_device('TXS1.12F4'): #Add power supply if not existing
             self.TXIODict['TXS1.12F4']=0
         elif not(check_existing_device('TXS1.12F4')):
             self.TXIODict['TXS1.12F4']=1
-            
-        sumTXIO = (self.pointDict['TXM1_6RM'] + self.pointDict['TXM1_16D'] + self.pointDict['TXM1_8XML'] + 
+
+        sumTXIO = (self.pointDict['TXM1_6RM'] + self.pointDict['TXM1_16D'] + self.pointDict['TXM1_8XML'] +
                    self.pointDict['TXM1_8UML'] + self.pointDict['TXM1_8X'] + self.pointDict['TXM1_8U'])
         if (sumTXIO >= 3) & (not(check_existing_device('TXS1.EF4'))): #Add Bus extender if > 3 modules
             self.TXIODict['TXS1.EF4'] = 1
         else:
             self.TXIODict['TXS1.EF4'] = 0
-            
+
         TXIOOrder = order_txio(self.TXIODict) #get ordered list of TXIO to add
         start = get_start_index()+1 #Construct index, device name, netdevid (-X00), address
         indexList = [index+start for index, val in enumerate(TXIOOrder)]
@@ -571,9 +571,9 @@ class Counter():
         address2 = get_address2(indexList)
         address3 = get_address3(indexList)
         global txiodf
-        txiodf = pd.DataFrame({'INDEX':indexList, 'PARTNO':TXIOOrder,'NETDEVID':netdevidtest,'ADDRESS1':address1, 
+        txiodf = pd.DataFrame({'INDEX':indexList, 'PARTNO':TXIOOrder,'NETDEVID':netdevidtest,'ADDRESS1':address1,
                                'ADDRESS2':address2, 'ADDRESS3':address3})
-        
+
         for i in txiodf.index:
             NETDEVID =  txiodf.loc[i, 'NETDEVID'] #'PanelName' + '-X###', see rules for assigning numbers to ###
             PARENTID = get_parentid(panelName) #Search panelName -> get PARENTID
@@ -602,20 +602,20 @@ class Counter():
             MACADDRESS = None
             NODEADDR = None
             SITENAME = None
-            
+
             global values
-            values = [NETDEVID, PARENTID, NAME, CTSYSNAME, DESCRIPTOR, 
+            values = [NETDEVID, PARENTID, NAME, CTSYSNAME, DESCRIPTOR,
                       TYPE, SUBTYPE, DWG_NAME, ADDRNAME1, ADDRESS1,
                       ADDRNAME2, ADDRESS2, ADDRNAME3, ADDRESS3,
                       STARTADDR, ADDRSTYLE, PARTNO, REFERNAME,
                       TBLOCKID, BAUDRATE, ONETOFOUR, FLNTYPE,
                       INSTANCE, DNS, MACADDRESS, NODEADDR, SITENAME]
             write_to(values) #send all items to SQL table NETDEV
-            
+
     def check_existing_any(self, panelName):
         """Checks to see if a system (panelName) has any TXIO devices attached to it.
         TXIO devices are defined as any I/O carrying devices.  This does not include power
-        supplies, IBE, the controller. 
+        supplies, IBE, the controller.
         parameters
         ----------
         panelName : name of system you wish to check for TXIO"""
@@ -633,18 +633,18 @@ class Counter():
         for items in txioList:
             if txioModules.str.contains(items).any():
                 return True
-            else: 
+            else:
                 return False
-       
+
 class AddDevice():
-    
+
     def __init__(self, engine, cursor):
         self.engine = engine
         self.cursor = cursor
         self.DEVICES = pd.read_sql_table('DEVICES', self.engine)
-    
-    def add_device(self, partDict, system, newPart = 0): 
-        """Add devices to the DEVICE table in Job Database. No support for part 
+
+    def add_device(self, partDict, system, newPart = 0):
+        """Add devices to the DEVICE table in Job Database. No support for part
         number description lookup. Current version only supports TXIO devices.
         No support for : device number, location
         Parameters
@@ -662,7 +662,7 @@ class AddDevice():
             partTypeIncrement = maxVal + 1
             partTypeStr = 2*chr(32) + str(partTypeIncrement) #2x chr(32) + string
             return partTypeStr
-        
+
         def descriptor_lookup(txio):
             descriptorDict = {'TXM1.6R-M':'6 DO Relay w/HOA', 'TXM1.16D':'16 DI',
                               'TXM1.8U':'8 Universal','TXM1.8U-ML':'8 Universal w/LOID',
@@ -674,7 +674,7 @@ class AddDevice():
                 return False
                 print('Unknown TXIO')
             return descriptor
-        
+
         deviceDF = self.get_existing_0(system)
         print('Old Existing Devices : {}'.format(deviceDF))
         for part in partDict:
@@ -692,7 +692,7 @@ class AddDevice():
                 SET QUANTITY = ?
                 WHERE SYSTEM = ? AND PARTNO = ? AND DEV_NUMBER = ?"""
                 self.cursor.execute(sqlUpdate, (quantity, system, part, '   000'))
-                
+
             else:
                 #Increment part_type and add new line
                 BMS_SYS_NO = None
@@ -721,12 +721,12 @@ class AddDevice():
                 ROOM2 = None
                 ROOM3 = None
                 ROOM4 = None
-                
+
                 values = [BMS_SYS_NO,CS,DEV_NUMBER,SYSTEM,INDWG,JOR_ITEM,LOCATION,MOD_FIELD,PARTNO,
                        PART_TYPE,QUANTITY,RETRO,DESCRIPT,ISA_DEV_ID,RH,TEMP,STPT,PTNAME,AREA1,
                        AREA2,AREA3,AREA4,ROOM1,ROOM2,ROOM3,ROOM4]
                 self.write_to_database(values)
-        
+
         newSQL = """SELECT DEVICES
         WHERE SYSTEM = ? AND DEV_NUMBER = ?"""
         self.cursor.execute(newSQL, (system, '   000')) #Error checking purpose?
@@ -740,11 +740,11 @@ class AddDevice():
         global partDevicesDF
         partDevicesDF = self.DEVICES.loc[sysindex, :]
         return partDevicesDF
-    
+
     def get_existing_1(self, system):
         """Returns current devices under a system (all device numbers)"""
         pass
-    
+
     def write_to_database(self, _values):
         """Writes a list of values to a row in a database"""
         sql = """INSERT INTO NETDEV
@@ -752,7 +752,7 @@ class AddDevice():
          ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"""
         self.cursor.execute(sql, _values)
         self.cursor.commit()
-            
+
 """Counter Stuff"""
 def count_test():
     global pathMDF, panelName, count, pointbas, pointfun, pointsen, netdev, pointDict
@@ -819,8 +819,8 @@ def device_test():
 #oldQuantity[0].QUANTITY + 2 #addition
 #quantity = float(oldQuantity[0].QUANTITY) + float(2)
 #
-#sqlUpdate = """UPDATE DEVICES 
-#SET QUANTITY = ? 
+#sqlUpdate = """UPDATE DEVICES
+#SET QUANTITY = ?
 #WHERE SYSTEM = ? AND PARTNO = ? AND DEV_NUMBER = ?"""
 #devnumber = '   000'
 #device.cursor.execute(sqlUpdate, (quantity,system, part, devnumber))
@@ -844,3 +844,105 @@ def device_test():
 #    for dataRow in myData:
 #        print(dataRow)
 #        crsr.execute(sql, dataRow)
+
+#%%
+
+# SQL Select statements
+
+# Number of Analog current outputs
+"""
+select *
+from POINTFUN
+full JOIN POINTSEN
+ON POINTFUN.POINTID = POINTSEN.POINTID
+WHERE TYPE = 'LAO' AND
+SENSORTYPE = 'CURRENT' AND
+NETDEVID = 'TIDWELL.L03.71601' AND
+VIRTUAL = 0
+"""
+
+# Number of analog outputs (non-current)
+"""
+select *
+from POINTFUN
+full JOIN POINTSEN
+ON POINTFUN.POINTID = POINTSEN.POINTID
+WHERE TYPE = 'LAO' AND
+SENSORTYPE != 'CURRENT' AND
+NETDEVID = 'TIDWELL.L03.71601' AND
+VIRTUAL = 0
+"""
+
+# Number of Analog Current Inputs
+"""
+select *
+from POINTFUN
+full JOIN POINTSEN
+ON POINTFUN.POINTID = POINTSEN.POINTID
+WHERE TYPE = 'LAI' AND
+SENSORTYPE = 'CURRENT' AND
+NETDEVID = 'TIDWELL.L03.71601' AND
+VIRTUAL = 0
+"""
+
+# Number of Analog general (Excluding current inputs)
+"""
+select *
+from POINTFUN
+full JOIN POINTSEN
+ON POINTFUN.POINTID = POINTSEN.POINTID
+WHERE TYPE = 'LAI' AND
+SENSORTYPE != 'CURRENT' AND
+NETDEVID = 'TIDWELL.L03.71601' AND
+VIRTUAL = 0
+"""
+
+# Number of LDI (this includes L2SL points)
+"""
+select *
+from POINTFUN
+full JOIN POINTSEN
+ON POINTFUN.POINTID = POINTSEN.POINTID
+WHERE TYPE = 'LDI' AND
+NETDEVID = 'TIDWELL.L03.71601' AND
+VIRTUAL = 0
+"""
+
+# Number of LDO (This includes L2SL points)
+"""
+select *
+from POINTFUN
+full JOIN POINTSEN
+ON POINTFUN.POINTID = POINTSEN.POINTID
+WHERE TYPE = 'LDO' AND
+NETDEVID = 'TIDWELL.L03.71601' AND
+VIRTUAL = 0
+"""
+
+# Number of LPACI
+"""
+select *
+from POINTFUN
+full JOIN POINTSEN
+ON POINTFUN.POINTID = POINTSEN.POINTID
+WHERE TYPE = 'LPACI' AND
+NETDEVID = 'TIDWELL.L03.71601' AND
+VIRTUAL = 0
+"""
+
+# Total query
+controller_name = 'TIDWELL.L04.71602'
+sql = """
+select
+sum(case when [t1].[TYPE] = 'LAI' AND [t1].[NETDEVID] = '{controller_name}' AND [t1].[SENSORTYPE] = 'CURRENT' AND [t1].[VIRTUAL] = 0 then 1 else 0 end) AS [LAICurrent],
+sum(case when [t1].[TYPE] = 'LAI' AND [t1].[NETDEVID] = '{controller_name}' AND [t1].[SENSORTYPE] != 'CURRENT' AND [t1].[VIRTUAL] = 0 then 1 else 0 end) AS [LAIStandard],
+sum(case when [t1].[TYPE] = 'LAO' AND [t1].[NETDEVID] = '{controller_name}' AND [t1].[SENSORTYPE] = 'CURRENT' AND [t1].[VIRTUAL] = 0 then 1 else 0 end) AS [LAOCurrent],
+sum(case when [t1].[TYPE] = 'LAO' AND [t1].[NETDEVID] = '{controller_name}' AND [t1].[SENSORTYPE] != 'CURRENT' AND [t1].[VIRTUAL] = 0 then 1 else 0 end) AS [LAOStandard],
+sum(case when [t1].[TYPE] = 'LDI' AND [t1].[NETDEVID] = '{controller_name}' AND [t1].[VIRTUAL] = 0 then 1 else 0 end) AS [LDI],
+sum(case when [t1].[TYPE] = 'LDO' AND [t1].[NETDEVID] = '{controller_name}' AND [t1].[VIRTUAL] = 0 then 1 else 0 end) AS [LDO],
+sum(case when [t1].[TYPE] = 'LPACI' AND [t1].[NETDEVID] = '{controller_name}' AND [t1].[VIRTUAL] = 0 then 1 else 0 end) AS [LPACI]
+	FROM (select [POINTFUN].[POINTID], [TYPE], [VIRTUAL], [NETDEVID], [SENSORTYPE]
+		from POINTFUN
+		full JOIN POINTSEN
+		ON POINTFUN.POINTID = POINTSEN.POINTID) AS [t1];
+""".format(controller_name=controller_name)

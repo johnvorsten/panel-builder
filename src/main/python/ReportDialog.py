@@ -173,10 +173,10 @@ class ReportDialogActions:
 
 
     def get_product_database_name(self):
-        """Return the database name (not logical or physical) of the associated
-        products database. The product database has the logical_name 'ProductDB'
+        """Return the database name (not physical or logical) of the associated
+        products database.
+        The product database has the logical_name 'ProductDB'
         in SQL server express"""
-
 
         sql = """select t1.[name] as logical_name, t1.physical_name,
                     (select name
@@ -184,7 +184,6 @@ class ReportDialogActions:
                     where t2.database_id = t1.database_id) as [database_name]
                 FROM [master].[sys].[master_files] as t1
                 where [name] = 'ProductDB'"""
-
 
         df = self.context.SQLBase.pandas_execute_sql(sql)
         if df.shape[0] == 0:
