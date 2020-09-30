@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'Ui_ProductUpdateDialog.ui'
+# Form implementation generated from reading ui file 'C:\Users\z003vrzk\.spyder-py3\Scripts\Work\panel_builder\src\main\ui designer\Ui_ProductUpdateDialog.ui'
 #
 # Created by: PyQt5 UI code generator 5.9.2
 #
@@ -33,6 +33,7 @@ class Ui_ProductUpdateDialog(object):
         self.DBNameLabel.setObjectName("DBNameLabel")
         self.formLayout.setWidget(0, QtWidgets.QFormLayout.LabelRole, self.DBNameLabel)
         self.DBFileText = QtWidgets.QLineEdit(ProductUpdateDialog)
+        self.DBFileText.setReadOnly(True)
         self.DBFileText.setObjectName("DBFileText")
         self.formLayout.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.DBFileText)
         self.partFileLabel = QtWidgets.QLabel(ProductUpdateDialog)
@@ -81,8 +82,8 @@ class Ui_ProductUpdateDialog(object):
     def retranslateUi(self, ProductUpdateDialog):
         _translate = QtCore.QCoreApplication.translate
         ProductUpdateDialog.setWindowTitle(_translate("ProductUpdateDialog", "Options"))
-        self.DBNameLabel.setText(_translate("ProductUpdateDialog", "Products Database File"))
-        self.DBFileText.setText(_translate("ProductUpdateDialog", "ProductDB.mdf"))
+        self.DBNameLabel.setText(_translate("ProductUpdateDialog", "Products Database Name"))
+        self.DBFileText.setText(_translate("ProductUpdateDialog", "ProductDB"))
         self.partFileLabel.setText(_translate("ProductUpdateDialog", "SOP Parts EXCEL File"))
         self.fileBrowseButton.setText(_translate("ProductUpdateDialog", "..."))
         self.updateDBButton.setText(_translate("ProductUpdateDialog", "Update Database"))

@@ -82,6 +82,7 @@ class SQLBase:
         connectivity"""
         if 'master_connection_str' not in self.__dict__:
             self._set_pyodbc_master_connection_str()
+
         try:
             self.master_connection = pyodbc.connect(self.master_connection_str)
         except Exception as e:
@@ -103,6 +104,10 @@ class SQLBase:
 
     def get_pyodbc_master_connection_str(self):
         """Return the master database connection string"""
+
+        if 'master_connection_str' not in self.__dict__:
+            self._set_pyodbc_master_connection_str()
+
         return self.master_connection_str
 
 
@@ -351,7 +356,7 @@ class SQLBase:
             with self.database_connection as connection:
                 df = pd.read_sql(sql_query, connection)
         except Exception as e:
-            logging.DEBUG(e)
+            logging.debug(e)
             raise(e)
 
         return df
@@ -365,12 +370,37 @@ class SQLBase:
         -------
         rows : ()
         """
+        if not 'database_connection' in self.__dict__:
+            msg='No database connection initialized. Try self.init_database_connection'
+            raise NameError(msg)
+
         try:
             with self.database_connection.cursor() as cursor:
                 cursor.execute(sql_query)
                 rows = cursor.fetchall()
         except Exception as e:
-            logging.DEBUG(e)
+            logging.debug(e)
+            raise(e)
+
+        return rows
+
+    def execute_sql_master(self, sql_query):
+        """Execute a SQL statement against system databases only
+        (uses the master database)
+        inputs
+        -------
+        sql_query : (str) sql string to execute
+        outputs
+        -------
+        rows : (list) of
+        """
+
+        try:
+            with self.master_connection.cursor() as cursor:
+                cursor.execute(sql_query)
+                rows = cursor.fetchall()
+        except Exception as e:
+            logging.debug(e)
             raise(e)
 
         return rows

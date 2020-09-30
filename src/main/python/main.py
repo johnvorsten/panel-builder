@@ -54,6 +54,8 @@ Once the files are created I can use them by subclassing two items :
     or by class attribute
 """
 
+# TODO - Reporting selected systems does not work
+
 
 class MainWindow(QMainWindow, Ui_MainWindow):
     # action_find_job_Signal = pyqtSignal()
@@ -395,6 +397,19 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         ProductUpdateDialog.exec()
         return None
 
+    def action_user_message(self, title, msg, detail=None):
+        """Create a simple user message box"""
+        msgBox = QMessageBox()
+        msgBox.setWindowTitle(title)
+        msgBox.setText(msg)
+        msgBox.setStandardButtons(QMessageBox.Ok)
+        msgBox.setIcon(QMessageBox.Information)
+        msgBox.setWindowIcon(self.context.alarm_icon)
+        if detail:
+            msgBox.setDetailedText(detail)
+        msgBox.exec()
+        return None
+
 
 
 #%%
@@ -416,6 +431,7 @@ class AppContext(ApplicationContext):
 
     def init_sql_master_connection(self):
         """Create a database connection for other apps to use"""
+
         # Read configuration options for database connection
         if '_DEFAULT_FILE_PATH' not in self.__dict__:
             self.init_application_options()
@@ -425,7 +441,15 @@ class AppContext(ApplicationContext):
         self.default_jobs_folder = options['default_jobs_folder']
 
         # Initialize database connection to master database
-        self.SQLBase = SQLBase(self.sql_server, self.sql_driver)
+        try:
+            self.SQLBase = SQLBase(self.sql_server, self.sql_driver)
+        except Exception as e:
+            msg=('There was an error connecting to the specified SQL Server' +
+                 ' instance. Please navigate to options and enter a correct' +
+                 ' SQL Server hostname.\n' +
+                 'SQL Server : {}\n' +
+                 'SQL Driver : {}'.format(self.sql_server, self.sql_driver))
+            self.action_user_message('Database Connection', msg, detail=str(e))
 
         return None
 
@@ -467,6 +491,7 @@ class AppContext(ApplicationContext):
             self.SQLBase.init_database_connection(self.database_name)
 
         return None
+
 
     def init_application_options(self):
         self._OPTIONS_FILE_PATH = r'./pb_options.json'
