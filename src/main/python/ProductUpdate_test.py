@@ -157,19 +157,3 @@ if __name__ == '__main__':
 
 
 #%%
-
-test_path = r"C:\path\to\fake\file.xlsx"
-dialog = QDialog()
-fileDialog = QFileDialog(dialog,
-                         'Select EXCEL SOP List',
-                         r"C:\\")
-fileDialog.setFileMode(QFileDialog.ExistingFile)
-fileDialog.setNameFilter("Excel Files (*.xlsx *.xls)")
-QtCore.QTimer.singleShot(500, fileDialog, .selectFile(test_path))
-if fileDialog.exec_():
-    # Dialog accepted
-    file_paths = fileDialog.selectedFiles()
-    sop_path = file_paths[0]
-else:
-    # Dialog closed
-    sop_path = None

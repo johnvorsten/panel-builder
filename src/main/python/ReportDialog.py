@@ -44,23 +44,6 @@ class ReportDialogActions:
 
         return None
 
-    @pyqtSlot(str)
-    def set_path_mdf(self, path_mdf):
-        """Set the database path chosen by the user"""
-        # self.path_mdf = path_mdf
-        return None
-
-    @pyqtSlot(str)
-    def set_path_ldf(self, path_ldf):
-        """Set the database log file path chosen by the user"""
-        # self.path_ldf = path_ldf
-        return None
-
-    @pyqtSlot(str)
-    def set_path_j_vars(self, path_j_vars):
-        """Set the job variable ini path chosen by the user"""
-        # self.path_j_vars = path_j_vars
-        return None
 
     def _init_systems_scroll(self):
         """Show a list of systems under the scroll box
@@ -80,6 +63,7 @@ class ReportDialogActions:
         """
         # Get a unique list of systems to display on UI
         unique_systems = self.get_unique_systems(self.context.database_name)
+
         # Layout to display unique systems on
         self.systemCheckLayoutArea = QVBoxLayout(self.scrollAreaWidgetContents)
 
@@ -123,9 +107,9 @@ class ReportDialogActions:
         elif self.selectSystemsButton.isChecked():
             selected_systems = []
             for i in range(self.systemCheckLayoutArea.count()):
-                checkbox = self.systemCheckLayoutArea.itemAt(i)
-                if isinstance(checkbox, QCheckBox):
-                    selected_systems.append(checkbox.objectName)
+                widget = self.systemCheckLayoutArea.itemAt(i).widget()
+                if isinstance(widget, QCheckBox) and widget.isChecked():
+                    selected_systems.append(widget.objectName())
 
         else:
             msg = ('You must indicate All Systems or Individual systems' +

@@ -223,7 +223,6 @@ class BOMGenerator():
                                                   int(row_start)+1,
                                                   col_end,
                                                   int(row_end)+1)
-
         return formula_str
 
 
@@ -238,7 +237,6 @@ class BOMGenerator():
             except FileNotFoundError:
                 os.mkdir(os.path.split(directory)[0])
                 os.mkdir(directory)
-
         return None
 
 
@@ -280,11 +278,11 @@ class BOMGenerator():
             worksheet.write(row, col, data, workbook.add_format(formatDict))
 
         current_row = node_start + n_head_rows
-        for system_name in unique_systems:
+        for system in unique_systems:
 
             # Get part data
             parts_df = self.get_parts_dataframe(database_name,
-                                                system=system_name,
+                                                system=system,
                                                 product_db=product_db)
 
             if 'IS NULL' not in retro_flags:
@@ -300,7 +298,7 @@ class BOMGenerator():
             # Write node data (BOM header)
             # This report style will include (1) Node cost, and a name
             node_cells = self.BOMFormat.\
-                _generate_node_header_std(system_name, node_start_row=0)
+                _generate_node_header_std(system, node_start_row=0)
             for row, col, data, formatDict in node_cells:
                 worksheet.write(row + current_row, col, data, workbook.add_format(formatDict))
 
@@ -365,7 +363,7 @@ class BOMGenerator():
         -------
         retro_flags : (list of str) user input of which retro flags to include
             Can include any or all of ['IS NULL',"= '+'","= '*'"]
-        system_names : (list of str) user input of which systems to output
+        unique_systems : (list of str) user input of which systems to output
             on the BOM."""
 
         # Instantiate a connection and attach the table

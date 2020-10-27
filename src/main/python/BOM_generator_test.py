@@ -8,6 +8,7 @@ Created on Mon Jan 13 09:15:30 2020
 import os, unittest
 
 # Third party imports
+import pandas as pd
 
 # Local imports
 from BOM_generator import BOMGenerator, BOMFormat
@@ -21,12 +22,16 @@ class Test_BOM_Generator(unittest.TestCase):
     def __init__(self, *args, **kwargs):
         super(Test_BOM_Generator, self).__init__(*args, **kwargs)
 
+        global sqlbase, BomGenerator, server_name, driver_name, path_mdf
+        global path_ldf, path_j_vars, database_name, product_db
+
         server_name = '.\DT_SQLEXPRESS'
         driver_name = 'SQL Server Native Client 11.0'
         path_mdf = r"C:\Users\z003vrzk\.spyder-py3\Scripts\Work\panel_builder\SQLTest\JHW\JobDB.mdf"
         path_ldf = r"C:\Users\z003vrzk\.spyder-py3\Scripts\Work\panel_builder\SQLTest\JHW\JobDB_Log.ldf"
         path_j_vars = r"C:\Users\z003vrzk\.spyder-py3\Scripts\Work\panel_builder\SQLTest\JHW\j_vars.ini"
         database_name = 'PBJobDB_test'
+        product_db = 'ProductDB'
 
         sqlbase = SQLBase(server_name, driver_name)
         # Check to see if a database already exists
@@ -48,22 +53,9 @@ class Test_BOM_Generator(unittest.TestCase):
                                     path_j_vars,
                                     database_name,
                                     sqlbase)
-
-        # Class attriutes definition
-        self.sqlbase = sqlbase
-        self.BomGenerator = BomGenerator
-        self.server_name = server_name
-        self.driver_name = driver_name
-        self.path_mdf = path_mdf
-        self.path_ldf = path_ldf
-        self.path_j_vars = path_j_vars
-        self.database_name = database_name
-
         return None
 
     def test_get_DEVICES_dataframe(self):
-
-        BomGenerator = self.BomGenerator
 
         # Get all objects from DEVICES SQL table
         devices = BomGenerator.get_DEVICES_dataframe()
@@ -86,6 +78,22 @@ class Test_BOM_Generator(unittest.TestCase):
         return None
 
     def test_get_parts_dataframe(self):
+
+        # List of unique systems
+        sql = """
+        SELECT [SYSTEM]
+        FROM [{db_name}].[dbo].[DEVICES]
+        GROUP BY [SYSTEM]""".format(db_name=database_name)
+        unique_systems = sqlbase.execute_sql(sql)
+        system = unique_systems[0][0] # '000 Riser'
+
+        # Return part numbers associated with the system '000 Riser'
+        res = BomGenerator.get_parts_dataframe(database_name, system, product_db)
+        test_res = ['A12126GSC', 'NP3024PP', 'PXA-SB115V192VA',
+                    'RHC302408', 'RSCG040424', 'TR100VA001']
+        for part, test_part in zip(res['PARTNO'], test_res):
+            self.assertEqual(part, test_part)
+
         return None
 
     def test__get_line_price_formula(self):
@@ -99,15 +107,6 @@ class Test_BOM_Generator(unittest.TestCase):
 
     def test_generate_report_larson(self):
         """Testing for BOMGenerator class larson report style"""
-
-        server_name = self.server_name
-        driver_name = self.driver_name
-        path_mdf = self.path_mdf
-        path_ldf = self.path_ldf
-        path_j_vars = self.path_j_vars
-        database_name = self.database_name
-        sqlbase = self.sqlbase
-        BomGenerator = self.BomGenerator
 
         # Unique systems to include in report
         sql = """
@@ -142,15 +141,6 @@ class Test_BOM_Generator(unittest.TestCase):
         return None
 
     def test_generate_report_standard(self):
-
-        server_name = self.server_name
-        driver_name = self.driver_name
-        path_mdf = self.path_mdf
-        path_ldf = self.path_ldf
-        path_j_vars = self.path_j_vars
-        database_name = self.database_name
-        sqlbase = self.sqlbase
-        BomGenerator = self.BomGenerator
 
         # Unique systems to include in report
         sql = """
