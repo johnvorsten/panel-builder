@@ -3,44 +3,107 @@ Created on Fri Dec  7 21:34:10 2018
 @author: z003vrzk
 """
 
+# Python imports
 import pandas as pd
-import JVWork_readSQL5 as JVSQL
 import math
-import numpy as np
 from datetime import date
 import os
+
+# Third party imports
+import numpy as np
+
+# Local imports
+from sql_tools import SQLBase
+
+# Local declarations
+
+
+#%%
 
 class Counter():
     """Counter class is used to count number of TXIO modules required for a
     PXC Modular. See methods for more explanation"""
     #TODO Make percent added dyamic w/ user input
 
-    def __init__(self, pathMDF):
-        """Connect to SQL master database
-        Attach user-specified Job Database
-        Connect to SQL specified Job Database
-        Read in required SQL tables to dataframes
-        Construct point dictionary
-        Parameters
-        ----------
-        pathMDF : path to MDF file we are trying to read/write (includes file name ex JOB.DB)
+    def __init__(self,
+                 path_mdf,
+                 path_ldf,
+                 path_j_vars,
+                 database_name,
+                 SQLBase):
         """
+        Construct a points dictionary and output the accumulated points
+        inputs
+        -------
+        path_mdf : (str) path to master database file (MSSQL)
+        path_ldf : (str) path to log database file (MSSQL)
+        path_j_vars : (str) path to j_vars.ini file found in each job folder
+        database_name : (str) name of database to connect as
+        SQLBase : (sql_tools.SQLBase) class with instantiated database
+            connection
+        """
+
         #Begin SQL connection to import data
-        self.jvsql = JVSQL.MySQLHandling() #JV SQL module
-        self.cursorMaster, self.connMaster = self.jvsql.create_master_connection() #connect master database
-        self.jvsql.attach(pathMDF) #attach user specified file
-        self.engine, self.conn, self.cursor = self.jvsql.create_PBDB_connection() #connect PBJobDB database
-        self.POINTBAS = pd.read_sql_table('POINTBAS', self.engine) #import POINTBAS table
-        self.POINTFUN = pd.read_sql_table('POINTFUN', self.engine)
-        self.POINTSEN = pd.read_sql_table('POINTSEN', self.engine)
-        self.NETDEV = pd.read_sql_table('NETDEV', self.engine)
-        self.pointDict = {'totalLDO':0, 'totalL2SL':0, 'DO_SUM':0, 'extraDO':0,'TXM1_6RM':0, 'emptyDO':0,
-                       'totalLDI':0,'totalLPACI':0,'DI_SUM':0,'extraDI':0,'TXM1_16D':0, 'emptyDI':0,
-                       'AO_SUM':0, 'totalCurrent_AO':0, 'extraCurrent_AO':0, 'totalStandard_AO':0,
-                       'extraStandard_AO':0, 'AI_SUM':0, 'totalCurrent_AI':0, 'extraCurrent_AI':0,
-                       'totalStandard_AI':0, 'extraStandard_AI':0, 'TXM1_8XML':0, 'TXM1_8UML':0,
-                       'TXM1_8X':0, 'TXM1_8U':0, 'emptyXML':0, 'emptyUML':0, 'emptyX':0, 'emptyU':0}
-        self.uniquePanels = self.unique_panels()
+        self.SQLBase = SQLBase
+
+        """Make sure the SQLBase class passed already has an active
+        Database connection
+        The Qt Application should instantiate and handle SQL database connections
+        It is not the responsibility of this class to handle database
+        connections"""
+        if 'database_connection' not in self.SQLBase.__dict__:
+            msg=('database connection is not instantiated. There may be an' +
+                 ' issue with Qt Instantiating a connection')
+            raise NameError(msg)
+
+        """The database and name should already be connected
+        Verify this through SQLBase
+        If a database is already attached then file_used_bool will be True
+        If name_used_bool is True then the logical database name is in use
+        existing_database_name is a string if file_used_bool is True"""
+        (file_used_bool,
+         name_used_bool,
+         existing_database_name) = self.SQLBase\
+            .check_existing_database(path_mdf, database_name)
+
+        msg='The selected MDF File {} is not connected to SQL Server'
+        assert(file_used_bool == True), msg.format(path_mdf)
+        msg=('The selected database name {} does not currently exist in SQL' +
+             ' Server')
+        assert(name_used_bool == True), msg.format(database_name)
+        msg=('The passed database_name and database name connected to SQL' +
+            ' Server do not match. Got {}, expected {}')
+        msg = msg.format(database_name, existing_database_name)
+        assert(existing_database_name == database_name), msg
+
+        self.pointDict = \
+            {'totalLDO':0, 'totalL2SL':0, 'DO_SUM':0, 'extraDO':0,
+             'TXM1_6RM':0, 'emptyDO':0, 'totalLDI':0,'totalLPACI':0,'DI_SUM':0,
+             'extraDI':0, 'TXM1_16D':0, 'emptyDI':0, 'AO_SUM':0,
+             'totalCurrent_AO':0, 'extraCurrent_AO':0,
+             'totalStandard_AO':0, 'extraStandard_AO':0,
+             'AI_SUM':0, 'totalCurrent_AI':0, 'extraCurrent_AI':0,
+             'totalStandard_AI':0, 'extraStandard_AI':0,
+             'TXM1_8XML':0, 'TXM1_8UML':0, 'TXM1_8X':0,
+             'TXM1_8U':0, 'emptyXML':0, 'emptyUML':0,
+             'emptyX':0, 'emptyU':0}
+
+        # #Begin SQL connection to import data
+        # server_name = '';
+        # driver_name = '';
+        # self.SQLBase = SQLBase(server_name, driver_name);
+
+        # self.cursorMaster, self.connMaster = self.jvsql.create_master_connection() #connect master database
+        # self.jvsql.attach(path_mdf) #attach user specified file
+        # self.engine, self.conn, self.cursor = self.jvsql.create_PBDB_connection() #connect PBJobDB database
+        # self.POINTBAS = pd.read_sql_table('POINTBAS', self.engine) #import POINTBAS table
+        # self.POINTFUN = pd.read_sql_table('POINTFUN', self.engine)
+        # self.POINTSEN = pd.read_sql_table('POINTSEN', self.engine)
+        # self.NETDEV = pd.read_sql_table('NETDEV', self.engine)
+
+        # self.uniquePanels = self.unique_panels()
+
+        return None
 
     def unique_panels(self):
         """Returns a set of unique panels detected. Count.uniquePanels"""
@@ -753,196 +816,3 @@ class AddDevice():
         self.cursor.execute(sql, _values)
         self.cursor.commit()
 
-"""Counter Stuff"""
-def count_test():
-    global pathMDF, panelName, count, pointbas, pointfun, pointsen, netdev, pointDict
-    pathMDF = 'C:\SQLTest\JobDB.mdf'
-    panelName = 'JHW.PXCM01'
-    count = Counter(pathMDF)
-    pointbas = count.POINTBAS
-    pointfun = count.POINTSEN
-    pointsen = count.POINTSEN
-    pointDict = count.pointDict
-    netdev = count.NETDEV
-    uniquePanels = count.uniquePanels
-    count.count_all_io(panelName, 4)
-    count.add_TXIO(panelName)
-    count.report(panelName, 4)
-    ##count.jvsql.detach()
-
-"""NEW STUFF"""
-def device_test():
-    global devices
-    device = AddDevice(count.engine, count.cursor)
-    devices = device.DEVICES
-    device.add_device(count.TXIODict, panelName)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-"""TEST CODE FOR READING/UPDATING SPECIFIC PART QUANTITIES"""
-#sqlQuantity = """SELECT QUANTITY FROM DEVICES
-#WHERE SYSTEM = ? AND PARTNO = ? AND DEV_NUMBER = ?"""
-#part = 'TXM1.8U'
-#system = 'JHW.PXCM04'
-#count.cursor.execute(sqlQuantity, (system, part, '   000'))
-#oldQuantity = count.cursor.fetchall()
-#print(oldQuantity)
-#oldQuantity[0] #row object
-#oldQuantity[0].QUANTITY #decimal object
-#oldQuantity[0].QUANTITY + 2 #addition
-#quantity = float(oldQuantity[0].QUANTITY) + float(2)
-#
-#sqlUpdate = """UPDATE DEVICES
-#SET QUANTITY = ?
-#WHERE SYSTEM = ? AND PARTNO = ? AND DEV_NUMBER = ?"""
-#devnumber = '   000'
-#device.cursor.execute(sqlUpdate, (quantity,system, part, devnumber))
-#device.cursor.commit()
-##SOLVED - use AND not &
-#print(type(devices['QUANTITY'][0]))
-
-"""TEST CODE FOR SELECTING TABLES"""
-#newSQL = """SELECT * FROM DEVICES
-#WHERE SYSTEM = ? AND DEV_NUMBER = ?"""
-#count.cursor.execute(newSQL, (system, '   000'))
-#newDF = count.cursor.fetchall()
-#labels = [name[0] for name in count.cursor.description]
-#print('New Dataframe : {}'.format(newDF))
-
-"""TEST CODE FOR GENERIC PYODBC OPERATIONS"""
-#Use this format for writing values to SQL Database... handles NONE etc types well
-#    sql = """
-#    INSERT INTO myTable VALUES (?, ?)
-#    """
-#    for dataRow in myData:
-#        print(dataRow)
-#        crsr.execute(sql, dataRow)
-
-#%%
-
-# SQL Select statements
-
-# Number of Analog current outputs
-"""
-select *
-from POINTFUN
-full JOIN POINTSEN
-ON POINTFUN.POINTID = POINTSEN.POINTID
-WHERE TYPE = 'LAO' AND
-SENSORTYPE = 'CURRENT' AND
-NETDEVID = 'TIDWELL.L03.71601' AND
-VIRTUAL = 0
-"""
-
-# Number of analog outputs (non-current)
-"""
-select *
-from POINTFUN
-full JOIN POINTSEN
-ON POINTFUN.POINTID = POINTSEN.POINTID
-WHERE TYPE = 'LAO' AND
-SENSORTYPE != 'CURRENT' AND
-NETDEVID = 'TIDWELL.L03.71601' AND
-VIRTUAL = 0
-"""
-
-# Number of Analog Current Inputs
-"""
-select *
-from POINTFUN
-full JOIN POINTSEN
-ON POINTFUN.POINTID = POINTSEN.POINTID
-WHERE TYPE = 'LAI' AND
-SENSORTYPE = 'CURRENT' AND
-NETDEVID = 'TIDWELL.L03.71601' AND
-VIRTUAL = 0
-"""
-
-# Number of Analog general (Excluding current inputs)
-"""
-select *
-from POINTFUN
-full JOIN POINTSEN
-ON POINTFUN.POINTID = POINTSEN.POINTID
-WHERE TYPE = 'LAI' AND
-SENSORTYPE != 'CURRENT' AND
-NETDEVID = 'TIDWELL.L03.71601' AND
-VIRTUAL = 0
-"""
-
-# Number of LDI (this includes L2SL points)
-"""
-select *
-from POINTFUN
-full JOIN POINTSEN
-ON POINTFUN.POINTID = POINTSEN.POINTID
-WHERE TYPE = 'LDI' AND
-NETDEVID = 'TIDWELL.L03.71601' AND
-VIRTUAL = 0
-"""
-
-# Number of LDO (This includes L2SL points)
-"""
-select *
-from POINTFUN
-full JOIN POINTSEN
-ON POINTFUN.POINTID = POINTSEN.POINTID
-WHERE TYPE = 'LDO' AND
-NETDEVID = 'TIDWELL.L03.71601' AND
-VIRTUAL = 0
-"""
-
-# Number of LPACI
-"""
-select *
-from POINTFUN
-full JOIN POINTSEN
-ON POINTFUN.POINTID = POINTSEN.POINTID
-WHERE TYPE = 'LPACI' AND
-NETDEVID = 'TIDWELL.L03.71601' AND
-VIRTUAL = 0
-"""
-
-# Total query
-controller_name = 'TIDWELL.L04.71602'
-sql = """
-select
-sum(case when [t1].[TYPE] = 'LAI' AND [t1].[NETDEVID] = '{controller_name}' AND [t1].[SENSORTYPE] = 'CURRENT' AND [t1].[VIRTUAL] = 0 then 1 else 0 end) AS [LAICurrent],
-sum(case when [t1].[TYPE] = 'LAI' AND [t1].[NETDEVID] = '{controller_name}' AND [t1].[SENSORTYPE] != 'CURRENT' AND [t1].[VIRTUAL] = 0 then 1 else 0 end) AS [LAIStandard],
-sum(case when [t1].[TYPE] = 'LAO' AND [t1].[NETDEVID] = '{controller_name}' AND [t1].[SENSORTYPE] = 'CURRENT' AND [t1].[VIRTUAL] = 0 then 1 else 0 end) AS [LAOCurrent],
-sum(case when [t1].[TYPE] = 'LAO' AND [t1].[NETDEVID] = '{controller_name}' AND [t1].[SENSORTYPE] != 'CURRENT' AND [t1].[VIRTUAL] = 0 then 1 else 0 end) AS [LAOStandard],
-sum(case when [t1].[TYPE] = 'LDI' AND [t1].[NETDEVID] = '{controller_name}' AND [t1].[VIRTUAL] = 0 then 1 else 0 end) AS [LDI],
-sum(case when [t1].[TYPE] = 'LDO' AND [t1].[NETDEVID] = '{controller_name}' AND [t1].[VIRTUAL] = 0 then 1 else 0 end) AS [LDO],
-sum(case when [t1].[TYPE] = 'LPACI' AND [t1].[NETDEVID] = '{controller_name}' AND [t1].[VIRTUAL] = 0 then 1 else 0 end) AS [LPACI]
-	FROM (select [POINTFUN].[POINTID], [TYPE], [VIRTUAL], [NETDEVID], [SENSORTYPE]
-		from POINTFUN
-		full JOIN POINTSEN
-		ON POINTFUN.POINTID = POINTSEN.POINTID) AS [t1];
-""".format(controller_name=controller_name)
